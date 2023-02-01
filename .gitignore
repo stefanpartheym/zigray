@@ -1,6 +1,3 @@
 # zig related
 /zig-cache/
 /zig-out/
-
-/deps/*
-!/deps/.gitkeep
