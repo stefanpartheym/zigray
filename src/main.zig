@@ -3,18 +3,18 @@ const ecs = @import("ecs");
 const ray = @import("raylib").raylib;
 
 // Modules
-const drawing = @import("modules").drawing;
-const movement = @import("modules").movement;
-const collision = @import("modules").collision;
-const input = @import("modules").input;
+const drawing = @import("modules/modules.zig").drawing;
+const movement = @import("modules/modules.zig").movement;
+const collision = @import("modules/modules.zig").collision;
+const input = @import("modules/modules.zig").input;
 
 // Components
-const Position = @import("components").Position;
-const Velocity = @import("components").Velocity;
-const Body = @import("components").Body;
-const Visual = @import("components").Visual;
-const Collision = @import("components").Collision;
-const Player = @import("components").Player;
+const Position = @import("components/components.zig").Position;
+const Velocity = @import("components/components.zig").Velocity;
+const Body = @import("components/components.zig").Body;
+const Visual = @import("components/components.zig").Visual;
+const Collision = @import("components/components.zig").Collision;
+const Player = @import("components/components.zig").Player;
 
 pub fn main() void {
     const name = "zigray-test";

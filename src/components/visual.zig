@@ -1,3 +1,3 @@
-const Color = @import("../raylib.zig").raylib.Color;
+const Color = @import("raylib").raylib.Color;
 
 pub const Visual = struct { color: Color };

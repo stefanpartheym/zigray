@@ -1,6 +1,6 @@
 const ecs = @import("ecs");
-const Position = @import("components").Position;
-const Velocity = @import("components").Velocity;
+const Position = @import("../components/components.zig").Position;
+const Velocity = @import("../components/components.zig").Velocity;
 
 pub fn move(reg: *ecs.Registry) void {
     var view = reg.view(.{ Position, Velocity }, .{});

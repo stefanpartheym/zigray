@@ -1,7 +1,7 @@
 const ray = @import("raylib").raylib;
 const ecs = @import("ecs");
-const Velocity = @import("components").Velocity;
-const Player = @import("components").Player;
+const Velocity = @import("../components/components.zig").Velocity;
+const Player = @import("../components/components.zig").Player;
 
 pub fn handleInput(reg: *ecs.Registry) void {
     const factorX: f32 = 5;

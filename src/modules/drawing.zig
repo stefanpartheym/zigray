@@ -1,8 +1,8 @@
 const ray = @import("raylib").raylib;
 const ecs = @import("ecs");
-const Position = @import("components").Position;
-const Body = @import("components").Body;
-const Visual = @import("components").Visual;
+const Position = @import("../components/components.zig").Position;
+const Body = @import("../components/components.zig").Body;
+const Visual = @import("../components/components.zig").Visual;
 
 pub fn beginDrawing() void {
     ray.BeginDrawing();
