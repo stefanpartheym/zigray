@@ -2,8 +2,8 @@ const std = @import("std");
 const ecs = @import("ecs");
 const ray = @import("raylib");
 
-// Modules
-const modules = @import("modules/index.zig");
+// Systems
+const systems = @import("systems/index.zig");
 
 // Components
 const components = @import("components/index.zig");
@@ -47,11 +47,11 @@ pub fn main() void {
     reg.add(player, Collision{});
 
     while (!ray.WindowShouldClose()) {
-        modules.input.handleInput(&reg);
-        modules.movement.move(&reg);
-        modules.collision.collide(&reg);
-        modules.drawing.beginDrawing();
-        modules.drawing.draw(&reg);
-        modules.drawing.endDrawing();
+        systems.input.handleInput(&reg);
+        systems.movement.move(&reg);
+        systems.collision.collide(&reg);
+        systems.drawing.beginDrawing();
+        systems.drawing.draw(&reg);
+        systems.drawing.endDrawing();
     }
 }
