@@ -1,4 +1,4 @@
-const ray = @import("raylib").raylib;
+const ray = @import("raylib");
 const ecs = @import("ecs");
 const Velocity = @import("../components/components.zig").Velocity;
 const Player = @import("../components/components.zig").Player;

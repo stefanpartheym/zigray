@@ -1,24 +1,22 @@
 const std = @import("std");
 const ecs = @import("ecs");
-const ray = @import("raylib").raylib;
+const ray = @import("raylib");
 
 // Modules
-const drawing = @import("modules/modules.zig").drawing;
-const movement = @import("modules/modules.zig").movement;
-const collision = @import("modules/modules.zig").collision;
-const input = @import("modules/modules.zig").input;
+const modules = @import("modules/modules.zig");
 
 // Components
-const Position = @import("components/components.zig").Position;
-const Velocity = @import("components/components.zig").Velocity;
-const Body = @import("components/components.zig").Body;
-const Visual = @import("components/components.zig").Visual;
-const Collision = @import("components/components.zig").Collision;
-const Player = @import("components/components.zig").Player;
+const components = @import("components/components.zig");
+const Position = components.Position;
+const Velocity = components.Velocity;
+const Body = components.Body;
+const Visual = components.Visual;
+const Collision = components.Collision;
+const Player = components.Player;
 
 pub fn main() void {
     const name = "zigray-test";
-    const version = "0.1.0";
+    const version = "0.0.1";
     const screenWidth = 800;
     const screenHeight = 600;
     const fps = 60;
@@ -49,11 +47,11 @@ pub fn main() void {
     reg.add(player, Collision{});
 
     while (!ray.WindowShouldClose()) {
-        input.handleInput(&reg);
-        movement.move(&reg);
-        collision.collide(&reg);
-        drawing.beginDrawing();
-        drawing.draw(&reg);
-        drawing.endDrawing();
+        modules.input.handleInput(&reg);
+        modules.movement.move(&reg);
+        modules.collision.collide(&reg);
+        modules.drawing.beginDrawing();
+        modules.drawing.draw(&reg);
+        modules.drawing.endDrawing();
     }
 }

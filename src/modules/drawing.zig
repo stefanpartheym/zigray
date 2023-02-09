@@ -1,4 +1,4 @@
-const ray = @import("raylib").raylib;
+const ray = @import("raylib");
 const ecs = @import("ecs");
 const Position = @import("../components/components.zig").Position;
 const Body = @import("../components/components.zig").Body;
