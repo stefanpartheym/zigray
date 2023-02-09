@@ -3,10 +3,10 @@ const ecs = @import("ecs");
 const ray = @import("raylib");
 
 // Modules
-const modules = @import("modules/modules.zig");
+const modules = @import("modules/index.zig");
 
 // Components
-const components = @import("components/components.zig");
+const components = @import("components/index.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
 const Body = components.Body;

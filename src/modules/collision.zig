@@ -1,9 +1,10 @@
 const ray = @import("raylib");
 const ecs = @import("ecs");
-const Position = @import("../components/components.zig").Position;
-const Velocity = @import("../components/components.zig").Velocity;
-const Body = @import("../components/components.zig").Body;
-const Collision = @import("../components/components.zig").Collision;
+const components = @import("../components/index.zig");
+const Position = components.Position;
+const Velocity = components.Velocity;
+const Body = components.Body;
+const Collision = components.Collision;
 
 /// Collision detection system
 /// NOTE: Currently only supports collisions on Y-axis.
