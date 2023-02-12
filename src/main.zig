@@ -13,6 +13,7 @@ const Body = components.Body;
 const Visual = components.Visual;
 const Collision = components.Collision;
 const Player = components.Player;
+const Movement = components.Movement;
 
 pub fn main() void {
     const name = "zigray-test";
@@ -38,16 +39,24 @@ pub fn main() void {
     reg.add(ground, Visual{ .color = ray.BROWN });
     reg.add(ground, Collision{});
 
+    var box = reg.create();
+    reg.add(box, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
+    reg.add(box, Body{ .width = 50, .height = 50 });
+    reg.add(box, Visual{ .color = ray.GRAY });
+    reg.add(box, Collision{});
+
     var player = reg.create();
     reg.add(player, Player{});
-    reg.add(player, Position{ .x = 400, .y = 450 });
-    reg.add(player, Velocity{ .staticY = 4 });
+    reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
+    reg.add(player, Velocity{ .x = 5, .y = 5, .staticY = 8 });
+    reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
     reg.add(player, Visual{ .color = ray.GREEN });
     reg.add(player, Collision{});
 
     while (!ray.WindowShouldClose()) {
         systems.input.handleInput(&reg);
+        systems.movement.accelerate(&reg);
         systems.movement.move(&reg);
         systems.collision.collide(&reg);
         systems.drawing.beginDrawing();

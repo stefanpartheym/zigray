@@ -1,23 +1,33 @@
 const ray = @import("raylib");
 const ecs = @import("ecs");
 const components = @import("../components/index.zig");
-const Velocity = components.Velocity;
+const Movement = components.Movement;
 const Player = components.Player;
+const MovementDirectionX = components.MovementDirectionX;
+const MovementDirectionY = components.MovementDirectionY;
 
 pub fn handleInput(reg: *ecs.Registry) void {
-    const factorX: f32 = 5;
-    const factorY: f32 = 5;
-    const velocityY: f32 = if (ray.IsKeyDown(ray.KEY_UP)) -3.5 else 0;
-    const velocityX: f32 =
-        if (ray.IsKeyDown(ray.KEY_LEFT)) @as(f32, -1)
-        else if (ray.IsKeyDown(ray.KEY_RIGHT)) @as(f32, 1)
-        else @as(f32, 0);
+    const directionX: MovementDirectionX =
+        if (ray.IsKeyDown(ray.KEY_RIGHT))
+            .right
+        else if (ray.IsKeyDown(ray.KEY_LEFT))
+            .left
+        else
+            .none;
 
-    var view = reg.view(.{ Velocity, Player }, .{});
+    const directionY: MovementDirectionY =
+        if (ray.IsKeyDown(ray.KEY_UP))
+            .up
+        else if (ray.IsKeyDown(ray.KEY_DOWN))
+            .down
+        else
+            .none;
+
+    var view = reg.view(.{ Movement, Player }, .{});
     var iter = view.iterator();
     while (iter.next()) |entity| {
-        var velocity = view.get(Velocity, entity);
-        velocity.x = velocityX * factorX;
-        velocity.y = velocityY * factorY;
+        var movement = view.get(Movement, entity);
+        movement.directionX = directionX;
+        movement.directionY = directionY;
     }
 }

@@ -41,10 +41,11 @@ pub fn collide(reg: *ecs.Registry) void {
 
             if (ray.CheckCollisionRecs(rectA, rectB)) {
                 const collision = ray.GetCollisionRec(rectA, rectB);
-                if (velocityA.getY() > 0) {
+                const velocityY = velocityA.currentY + velocityA.staticY;
+                if (velocityY > 0) {
                     positionA.y -= collision.height;
                 }
-                else if (velocityA.getY() < 0) {
+                else if (velocityY < 0) {
                     positionA.y += collision.height;
                 }
             }
