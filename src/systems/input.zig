@@ -27,7 +27,9 @@ pub fn handleInput(reg: *ecs.Registry) void {
     var iter = view.iterator();
     while (iter.next()) |entity| {
         var movement = view.get(Movement, entity);
+        movement.previousDirectionX = movement.directionX;
         movement.directionX = directionX;
+        movement.previousDirectionY = movement.directionY;
         movement.directionY = directionY;
     }
 }

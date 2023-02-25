@@ -7,9 +7,6 @@ const Velocity = components.Velocity;
 const Movement = components.Movement;
 
 /// Acceleration system
-/// TODO:
-///   The system needs to check whether the direction has changed and reset the
-///   "current" velocity back to `0` accordingly, to trigger reacceleration.
 pub fn accelerate(reg: *ecs.Registry) void {
     var view = reg.view(.{ Velocity, Movement }, .{});
     var iter = view.iterator();
@@ -17,17 +14,17 @@ pub fn accelerate(reg: *ecs.Registry) void {
         var velocity = view.get(Velocity, entity);
         const movement = view.get(Movement, entity);
 
-        if (movement.directionX == .none) {
+        if (movement.directionX != movement.previousDirectionX) {
             velocity.currentX = 0;
         }
-        else if (velocity.currentX < velocity.x) {
+        if (movement.directionX != .none and velocity.currentX < velocity.x) {
             velocity.currentX += velocity.accelerationX;
         }
 
-        if (movement.directionY == .none) {
+        if (movement.directionY != movement.previousDirectionY) {
             velocity.currentY = 0;
         }
-        else if (velocity.currentY < velocity.y) {
+        if (movement.directionY != .none and velocity.currentY < velocity.y) {
             velocity.currentY += velocity.accelerationY;
         }
     }

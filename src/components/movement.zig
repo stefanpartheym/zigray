@@ -17,5 +17,7 @@ pub const MovementDirectionY = enum {
 
 pub const Movement = struct {
     directionX: MovementDirectionX = .none,
+    previousDirectionX: MovementDirectionX = .none,
     directionY: MovementDirectionY = .none,
+    previousDirectionY: MovementDirectionY = .none,
 };
