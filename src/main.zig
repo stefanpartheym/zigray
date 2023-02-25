@@ -22,17 +22,46 @@ pub fn main() void {
     const screenHeight = 600;
     const fps = 60;
 
+    initialize(name, version, screenWidth, screenHeight, fps);
+    defer finalize();
+
+    var reg = ecs.Registry.init(std.heap.page_allocator);
+
+    setupEntities(&reg, screenWidth, screenHeight);
+
+    while (!ray.WindowShouldClose()) {
+        systems.input.handleInput(&reg);
+        systems.movement.accelerate(&reg);
+        systems.movement.move(&reg);
+        systems.collision.collide(&reg) catch |err| {
+            std.debug.print("ERROR (systems.collision.collide): {}\n", .{err});
+        };
+        systems.drawing.beginDrawing();
+        systems.drawing.draw(&reg);
+        systems.drawing.endDrawing();
+    }
+}
+
+fn initialize(
+    comptime name: []const u8,
+    comptime version: []const u8,
+    screenWidth: f32,
+    screenHeight: f32,
+    fps: u8,
+) void {
     std.debug.print("## {s} (v{s}) ##\n", .{ name, version });
 
     ray.SetConfigFlags(ray.FLAG_WINDOW_HIGHDPI);
     ray.SetTraceLogLevel(ray.LOG_WARNING);
-    ray.InitWindow(screenWidth, screenHeight, name ++ " (v" ++ version ++ ")");
-    defer ray.CloseWindow();
-
     ray.SetTargetFPS(fps);
+    ray.InitWindow(@floatToInt(i32, screenWidth), @floatToInt(i32, screenHeight), name ++ " (v" ++ version ++ ")");
+}
 
-    var reg = ecs.Registry.init(std.heap.page_allocator);
+fn finalize() void {
+    ray.CloseWindow();
+}
 
+fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     var floor = reg.create();
     reg.add(floor, Position{ .x = screenWidth / 2, .y = screenHeight - 5 });
     reg.add(floor, Body{ .width = screenWidth, .height = 10 });
@@ -74,16 +103,4 @@ pub fn main() void {
     reg.add(player, Body{ .width = 50, .height = 50 });
     reg.add(player, Visual{ .color = ray.GREEN });
     reg.add(player, Collision{});
-
-    while (!ray.WindowShouldClose()) {
-        systems.input.handleInput(&reg);
-        systems.movement.accelerate(&reg);
-        systems.movement.move(&reg);
-        systems.collision.collide(&reg) catch |err| {
-            std.debug.print("ERROR (systems.collision.collide): {}\n", .{ err });
-        };
-        systems.drawing.beginDrawing();
-        systems.drawing.draw(&reg);
-        systems.drawing.endDrawing();
-    }
 }
