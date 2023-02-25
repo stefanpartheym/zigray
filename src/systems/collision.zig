@@ -10,9 +10,13 @@ const MovementDirectionY = components.MovementDirectionY;
 const Body = components.Body;
 const Collision = components.Collision;
 
-const RectCollisionCause = enum {
-    x,
-    y,
+pub const CollisionResolveError = error{
+    NoCollisionCauseDetected,
+};
+
+pub const CollisionSystemError = error{
+    NoCollisionCauseDetected,
+    UnableToResolveCollision,
 };
 
 const CollisionCheckData = struct {
@@ -60,21 +64,40 @@ fn hasCollision(
     return ray.CheckCollisionRecs(collisionCheck.entity, collisionCheck.collider);
 }
 
+/// Returns whether or not the given collision value could be caused by the
+/// given position offset.
+fn isCollisionCause(collisionValue: f32, positionOffset: f32) bool {
+    const scaleFactor = 4 * 10;
+    const normalizedCollisionValue = std.math.round(collisionValue * scaleFactor) / scaleFactor;
+    const normalizedPositionOffset = std.math.round(positionOffset * scaleFactor) / scaleFactor;
+
+    return normalizedCollisionValue <= normalizedPositionOffset;
+}
+
 fn resolveCollision(
     movement: Movement,
     velocity: Velocity,
     positionA: Position,
     bodyA: Body,
     positionB: Position,
-    bodyB: Body
-) Position {
+    bodyB: Body,
+) CollisionResolveError!Position {
     var result = Position{ .x = positionA.x, .y = positionA.y };
     const collisionCheck = prepareCollisionCheckData(positionA, bodyA, positionB, bodyB);
     const collision = ray.GetCollisionRec(collisionCheck.entity, collisionCheck.collider);
 
-    // TODO: Condition needs to be enhanced to avoid non-reactiveness when a
-    // velocity below 0.25 is used.
-    if (collision.height <= velocity.currentY and movement.directionY != .none) {
+    const causedByX =
+        movement.directionX != .none and
+        isCollisionCause(collision.width, velocity.currentX);
+    const causedByY =
+        movement.directionY != .none and
+        isCollisionCause(collision.height, velocity.currentY);
+
+    if (!causedByX and !causedByY) {
+        return CollisionResolveError.NoCollisionCauseDetected;
+    }
+
+    if (causedByY) {
         if (movement.directionY == .up) {
             result.y += collision.height;
         }
@@ -83,9 +106,7 @@ fn resolveCollision(
         }
     }
 
-    // TODO: Condition needs to be enhanced to avoid non-reactiveness when a
-    // velocity below 0.25 is used.
-    if (collision.width <= velocity.currentX and movement.directionX != .none) {
+    if (causedByX) {
         if (movement.directionX == .left) {
             result.x += collision.width;
         }
@@ -98,7 +119,7 @@ fn resolveCollision(
 }
 
 /// Collision detection and response system
-pub fn collide(reg: *ecs.Registry) void {
+pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
     var view = reg.view(.{ Position, Velocity, Movement, Body, Collision }, .{});
     var viewColliders = reg.view(.{ Position, Collision }, .{});
     var iter = view.iterator();
@@ -118,8 +139,16 @@ pub fn collide(reg: *ecs.Registry) void {
             const positionB = view.getConst(Position, collider);
             const bodyB = view.getConst(Body, collider);
 
+            const maxIterations = 2;
+            var currentIterations: u8 = 0;
             while (hasCollision(positionA.*, bodyA, positionB, bodyB)) {
-                const newPosition = resolveCollision(
+                // Make sure to return an error, if collision could not be
+                // resolved within 2 iterations.
+                if (currentIterations > maxIterations) {
+                    return CollisionSystemError.UnableToResolveCollision;
+                }
+
+                const newPosition = try resolveCollision(
                     movement,
                     velocity,
                     positionA.*,
@@ -129,7 +158,8 @@ pub fn collide(reg: *ecs.Registry) void {
                 );
                 positionA.x = newPosition.x;
                 positionA.y = newPosition.y;
-                // TODO: Make sure there are only two iterations max. Return error otherwise.
+
+                currentIterations += 1;
             }
         }
     }

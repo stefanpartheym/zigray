@@ -3,8 +3,8 @@ pub const Velocity = struct {
     y: f32,
     currentX: f32 = 0,
     currentY: f32 = 0,
-    accelerationX: f32 = 0.25,
-    accelerationY: f32 = 0.25,
+    accelerationX: f32 = 0.15,
+    accelerationY: f32 = 0.15,
 
     fn accelerateXBy(self: *Velocity, acceleration: f32) void {
         if (self.currentX < self.x) {

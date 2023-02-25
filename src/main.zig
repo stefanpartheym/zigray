@@ -64,7 +64,9 @@ pub fn main() void {
         systems.input.handleInput(&reg);
         systems.movement.accelerate(&reg);
         systems.movement.move(&reg);
-        systems.collision.collide(&reg);
+        systems.collision.collide(&reg) catch |err| {
+            std.debug.print("ERROR (systems.collision.collide): {}\n", .{ err });
+        };
         systems.drawing.beginDrawing();
         systems.drawing.draw(&reg);
         systems.drawing.endDrawing();
