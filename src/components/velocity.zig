@@ -6,10 +6,23 @@ pub const Velocity = struct {
     accelerationX: f32 = 0.25,
     accelerationY: f32 = 0.25,
 
-    staticX: f32 = 0,
-    staticY: f32 = 0,
-    staticCurrentX: f32 = 0,
-    staticCurrentY: f32 = 0,
-    staticAccelerationX: f32 = 0.25,
-    staticAccelerationY: f32 = 0.25,
+    fn accelerateXBy(self: *Velocity, acceleration: f32) void {
+        if (self.currentX < self.x) {
+            self.currentX += acceleration;
+        }
+    }
+
+    fn accelerateYBy(self: *Velocity, acceleration: f32) void {
+        if (self.currentY < self.y) {
+            self.currentY += acceleration;
+        }
+    }
+
+    pub fn accelerateX(self: *Velocity) void {
+        self.accelerateXBy(self.accelerationX);
+    }
+
+    pub fn accelerateY(self: *Velocity) void {
+        self.accelerateYBy(self.accelerationX);
+    }
 };

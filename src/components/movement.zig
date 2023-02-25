@@ -1,3 +1,9 @@
+///
+/// TODO:
+/// An additional, more general type of movement is required, which also applies
+/// to gravitation not only user input induced movement.
+///
+
 pub const MovementDirectionX = enum {
     none,
     left,

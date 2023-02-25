@@ -6,6 +6,10 @@ const Position = components.Position;
 const Velocity = components.Velocity;
 const Movement = components.Movement;
 
+/// Acceleration system
+/// TODO:
+///   The system needs to check whether the direction has changed and reset the
+///   "current" velocity back to `0` accordingly, to trigger reacceleration.
 pub fn accelerate(reg: *ecs.Registry) void {
     var view = reg.view(.{ Velocity, Movement }, .{});
     var iter = view.iterator();
@@ -15,28 +19,21 @@ pub fn accelerate(reg: *ecs.Registry) void {
 
         if (movement.directionX == .none) {
             velocity.currentX = 0;
-            if (velocity.staticCurrentX < velocity.staticX) {
-                velocity.staticCurrentX += velocity.staticAccelerationX;
-            }
         }
         else if (velocity.currentX < velocity.x) {
             velocity.currentX += velocity.accelerationX;
-            velocity.staticCurrentX = 0;
         }
 
         if (movement.directionY == .none) {
             velocity.currentY = 0;
-            if (velocity.staticCurrentY < velocity.staticY) {
-                velocity.staticCurrentY += velocity.staticAccelerationY;
-            }
         }
         else if (velocity.currentY < velocity.y) {
             velocity.currentY += velocity.accelerationY;
-            velocity.staticCurrentY = 0;
         }
     }
 }
 
+/// Movement system
 pub fn move(reg: *ecs.Registry) void {
     var view = reg.view(.{ Position, Velocity, Movement }, .{});
     var iter = view.iterator();
@@ -54,7 +51,7 @@ pub fn move(reg: *ecs.Registry) void {
             else if (movement.directionY == .down) 1
             else 0;
 
-        position.x += velocity.currentX * velocityFactorX + velocity.staticCurrentX;
-        position.y += velocity.currentY * velocityFactorY + velocity.staticCurrentY;
+        position.x += velocity.currentX * velocityFactorX;
+        position.y += velocity.currentY * velocityFactorY;
     }
 }

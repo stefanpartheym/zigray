@@ -39,16 +39,22 @@ pub fn main() void {
     reg.add(ground, Visual{ .color = ray.BROWN });
     reg.add(ground, Collision{});
 
-    var box = reg.create();
-    reg.add(box, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
-    reg.add(box, Body{ .width = 50, .height = 50 });
-    reg.add(box, Visual{ .color = ray.GRAY });
-    reg.add(box, Collision{});
+    var box1 = reg.create();
+    reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
+    reg.add(box1, Body{ .width = 50, .height = 50 });
+    reg.add(box1, Visual{ .color = ray.GRAY });
+    reg.add(box1, Collision{});
+
+    var box2 = reg.create();
+    reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
+    reg.add(box2, Body{ .width = 50, .height = 50 });
+    reg.add(box2, Visual{ .color = ray.GRAY });
+    reg.add(box2, Collision{});
 
     var player = reg.create();
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
-    reg.add(player, Velocity{ .x = 5, .y = 5, .staticY = 8 });
+    reg.add(player, Velocity{ .x = 5, .y = 5 });
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
     reg.add(player, Visual{ .color = ray.GREEN });
