@@ -30,7 +30,7 @@ pub fn main() void {
 
     setupEntities(&reg, screenWidth, screenHeight);
 
-    while (!ray.WindowShouldClose()) {
+    while (!shouldCloseWindow()) {
         systems.input.handleInput(&reg);
         systems.movement.accelerate(&reg);
         systems.movement.move(&reg);
@@ -41,6 +41,10 @@ pub fn main() void {
         systems.drawing.draw(&reg);
         systems.drawing.endDrawing();
     }
+}
+
+fn shouldCloseWindow() bool {
+    return ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q);
 }
 
 fn initialize(

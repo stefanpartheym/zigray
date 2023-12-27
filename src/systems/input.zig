@@ -6,20 +6,29 @@ const Player = components.Player;
 const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
 
-pub fn handleInput(reg: *ecs.Registry) void {
-    const directionX: MovementDirectionX = if (ray.IsKeyDown(ray.KEY_RIGHT))
-        .right
-    else if (ray.IsKeyDown(ray.KEY_LEFT))
-        .left
-    else
-        .none;
+fn getDirectionX() MovementDirectionX {
+    if (ray.IsKeyDown(ray.KEY_RIGHT) or ray.IsKeyDown(ray.KEY_L)) {
+        return .right;
+    } else if (ray.IsKeyDown(ray.KEY_LEFT) or ray.IsKeyDown(ray.KEY_H)) {
+        return .left;
+    } else {
+        return .none;
+    }
+}
 
-    const directionY: MovementDirectionY = if (ray.IsKeyDown(ray.KEY_UP))
-        .up
-    else if (ray.IsKeyDown(ray.KEY_DOWN))
-        .down
-    else
-        .none;
+fn getDirectionY() MovementDirectionY {
+    if (ray.IsKeyDown(ray.KEY_UP) or ray.IsKeyDown(ray.KEY_K)) {
+        return .up;
+    } else if (ray.IsKeyDown(ray.KEY_DOWN) or ray.IsKeyDown(ray.KEY_J)) {
+        return .down;
+    } else {
+        return .none;
+    }
+}
+
+pub fn handleInput(reg: *ecs.Registry) void {
+    const directionX: MovementDirectionX = getDirectionX();
+    const directionY: MovementDirectionY = getDirectionY();
 
     var view = reg.view(.{ Movement, Player }, .{});
     var iter = view.entityIterator();
