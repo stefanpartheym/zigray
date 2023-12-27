@@ -1,3 +1,3 @@
 test {
-    _ = @import("components/components.zig");
+    _ = @import("components/index.zig");
 }

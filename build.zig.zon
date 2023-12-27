@@ -1,0 +1,13 @@
+.{
+    .name = "zigray",
+    .version = "0.0.1",
+    .paths = .{
+        "."
+    },
+    .dependencies = .{
+        .@"zig-ecs" = .{
+            .url = "https://github.com/prime31/zig-ecs/archive/239fb3344b2eb3b2aa48fbf63069bc7c8a64360a.tar.gz",
+            .hash = "1220635897b8cdca618ffa77edacb625e5d35347c9ccb2f8a0684b745517daf2e59f"
+        },
+    },
+}

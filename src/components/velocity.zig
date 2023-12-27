@@ -23,6 +23,6 @@ pub const Velocity = struct {
     }
 
     pub fn accelerateY(self: *Velocity) void {
-        self.accelerateYBy(self.accelerationX);
+        self.accelerateYBy(self.accelerationY);
     }
 };

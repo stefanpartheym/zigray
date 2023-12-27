@@ -7,24 +7,22 @@ const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
 
 pub fn handleInput(reg: *ecs.Registry) void {
-    const directionX: MovementDirectionX =
-        if (ray.IsKeyDown(ray.KEY_RIGHT))
-            .right
-        else if (ray.IsKeyDown(ray.KEY_LEFT))
-            .left
-        else
-            .none;
+    const directionX: MovementDirectionX = if (ray.IsKeyDown(ray.KEY_RIGHT))
+        .right
+    else if (ray.IsKeyDown(ray.KEY_LEFT))
+        .left
+    else
+        .none;
 
-    const directionY: MovementDirectionY =
-        if (ray.IsKeyDown(ray.KEY_UP))
-            .up
-        else if (ray.IsKeyDown(ray.KEY_DOWN))
-            .down
-        else
-            .none;
+    const directionY: MovementDirectionY = if (ray.IsKeyDown(ray.KEY_UP))
+        .up
+    else if (ray.IsKeyDown(ray.KEY_DOWN))
+        .down
+    else
+        .none;
 
     var view = reg.view(.{ Movement, Player }, .{});
-    var iter = view.iterator();
+    var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var movement = view.get(Movement, entity);
         movement.previousDirectionX = movement.directionX;

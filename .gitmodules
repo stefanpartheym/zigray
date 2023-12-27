@@ -1,3 +1,0 @@
-[submodule "deps/zig-ecs"]
-	path = deps/zig-ecs
-	url = https://github.com/stefanpartheym/zig-ecs.git

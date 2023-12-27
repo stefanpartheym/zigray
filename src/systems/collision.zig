@@ -4,6 +4,7 @@ const ecs = @import("ecs");
 const components = @import("../components/index.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
+const Gravity = components.Gravity;
 const Movement = components.Movement;
 const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
@@ -76,11 +77,11 @@ fn isCollisionCause(collisionValue: f32, positionOffset: f32) bool {
 
 fn resolveCollision(
     movement: Movement,
-    velocity: Velocity,
     positionA: Position,
     bodyA: Body,
     positionB: Position,
     bodyB: Body,
+    hasGravity: bool,
 ) CollisionResolveError!Position {
     var result = Position{ .x = positionA.x, .y = positionA.y };
     const collisionCheck = prepareCollisionCheckData(positionA, bodyA, positionB, bodyB);
@@ -88,31 +89,23 @@ fn resolveCollision(
 
     const causedByX =
         movement.directionX != .none and
-        isCollisionCause(collision.width, velocity.currentX);
+        isCollisionCause(collision.width, @abs(positionA.offsetX));
     const causedByY =
-        movement.directionY != .none and
-        isCollisionCause(collision.height, velocity.currentY);
+        (movement.directionY != .none or hasGravity) and
+        isCollisionCause(collision.height, @abs(positionA.offsetY));
 
     if (!causedByX and !causedByY) {
         return CollisionResolveError.NoCollisionCauseDetected;
     }
 
     if (causedByY) {
-        if (movement.directionY == .up) {
-            result.y += collision.height;
-        }
-        if (movement.directionY == .down) {
-            result.y -= collision.height;
-        }
+        const correctionFactor: f32 = if (positionA.offsetY < 0) 1 else -1;
+        result.y += collision.height * correctionFactor;
     }
 
     if (causedByX) {
-        if (movement.directionX == .left) {
-            result.x += collision.width;
-        }
-        if (movement.directionX == .right) {
-            result.x -= collision.width;
-        }
+        const correctionFactor: f32 = if (positionA.offsetX < 0) 1 else -1;
+        result.x += collision.width * correctionFactor;
     }
 
     return result;
@@ -120,16 +113,16 @@ fn resolveCollision(
 
 /// Collision detection and response system
 pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
-    var view = reg.view(.{ Position, Velocity, Movement, Body, Collision }, .{});
+    var view = reg.view(.{ Position, Movement, Body, Collision }, .{});
     var viewColliders = reg.view(.{ Position, Collision }, .{});
-    var iter = view.iterator();
+    var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var positionA = view.get(Position, entity);
         const bodyA = view.getConst(Body, entity);
-        const velocity = view.getConst(Velocity, entity);
         const movement = view.getConst(Movement, entity);
+        const hasGravity = reg.has(Gravity, entity);
 
-        var iterColliders = viewColliders.iterator();
+        var iterColliders = viewColliders.entityIterator();
         while (iterColliders.next()) |collider| {
             // Make sure not to check collisions for the same entity.
             if (collider == entity) {
@@ -148,14 +141,7 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
                     return CollisionSystemError.UnableToResolveCollision;
                 }
 
-                const newPosition = try resolveCollision(
-                    movement,
-                    velocity,
-                    positionA.*,
-                    bodyA,
-                    positionB,
-                    bodyB,
-                );
+                const newPosition = try resolveCollision(movement, positionA.*, bodyA, positionB, bodyB, hasGravity);
                 positionA.x = newPosition.x;
                 positionA.y = newPosition.y;
 
