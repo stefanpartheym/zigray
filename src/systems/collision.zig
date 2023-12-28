@@ -69,8 +69,10 @@ fn hasCollision(
 /// given position offset.
 fn isCollisionCause(collisionValue: f32, positionOffset: f32) bool {
     const scaleFactor = 4 * 10;
-    const normalizedCollisionValue = std.math.round(collisionValue * scaleFactor) / scaleFactor;
-    const normalizedPositionOffset = std.math.round(positionOffset * scaleFactor) / scaleFactor;
+    const normalizedCollisionValue =
+        std.math.round(collisionValue * scaleFactor) / scaleFactor;
+    const normalizedPositionOffset =
+        std.math.round(positionOffset * scaleFactor) / scaleFactor;
 
     return normalizedCollisionValue <= normalizedPositionOffset;
 }
@@ -141,7 +143,14 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
                     return CollisionSystemError.UnableToResolveCollision;
                 }
 
-                const newPosition = try resolveCollision(movement, positionA.*, bodyA, positionB, bodyB, hasGravity);
+                const newPosition = try resolveCollision(
+                    movement,
+                    positionA.*,
+                    bodyA,
+                    positionB,
+                    bodyB,
+                    hasGravity,
+                );
                 positionA.x = newPosition.x;
                 positionA.y = newPosition.y;
 

@@ -59,7 +59,11 @@ fn initialize(
     ray.SetConfigFlags(ray.FLAG_WINDOW_HIGHDPI);
     ray.SetTraceLogLevel(ray.LOG_WARNING);
     ray.SetTargetFPS(fps);
-    ray.InitWindow(@as(i32, @intFromFloat(screenWidth)), @as(i32, @intFromFloat(screenHeight)), name ++ " (v" ++ version ++ ")");
+    ray.InitWindow(
+        @as(i32, @intFromFloat(screenWidth)),
+        @as(i32, @intFromFloat(screenHeight)),
+        name ++ " (v" ++ version ++ ")",
+    );
 }
 
 fn finalize() void {
