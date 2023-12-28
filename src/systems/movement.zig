@@ -31,6 +31,41 @@ pub fn accelerate(reg: *ecs.Registry) void {
     }
 }
 
+/// Movement system (begin)
+pub fn beginMovement(reg: *ecs.Registry) void {
+    var view = reg.view(.{ Position, Movement }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var position = view.get(Position, entity);
+        position.tempX = position.x;
+        position.tempY = position.y;
+        position.offsetX = 0;
+        position.offsetY = 0;
+    }
+}
+
+/// Movement system (end)
+pub fn endMovement(reg: *ecs.Registry) void {
+    var view = reg.view(.{ Position, Movement }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var position = view.get(Position, entity);
+        position.x = position.tempX;
+        position.y = position.tempY;
+    }
+}
+
+/// Movement system (apply position offset)
+pub fn applyPositionOffset(reg: *ecs.Registry) void {
+    var view = reg.view(.{ Position, Movement }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var position = view.get(Position, entity);
+        position.tempX += position.offsetX;
+        position.tempY += position.offsetY;
+    }
+}
+
 /// Movement system
 pub fn move(reg: *ecs.Registry) void {
     var view = reg.view(.{ Position, Velocity, Movement }, .{});
@@ -45,14 +80,7 @@ pub fn move(reg: *ecs.Registry) void {
         const velocityFactorY: f32 =
             if (movement.directionY == .up) -1 else if (movement.directionY == .down) 1 else 0;
 
-        const gravityX: f32 = 0;
-        var gravityY: f32 = 0;
-        if (reg.has(Gravity, entity)) {
-            gravityY = 3;
-        }
-        position.offsetX = (velocity.currentX * velocityFactorX) + gravityX;
-        position.offsetY = (velocity.currentY * velocityFactorY) + gravityY;
-        position.x += position.offsetX;
-        position.y += position.offsetY;
+        position.offsetX += velocity.currentX * velocityFactorX;
+        position.offsetY += velocity.currentY * velocityFactorY;
     }
 }

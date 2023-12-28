@@ -33,10 +33,14 @@ pub fn main() void {
     while (!shouldCloseWindow()) {
         systems.input.handleInput(&reg);
         systems.movement.accelerate(&reg);
+        systems.movement.beginMovement(&reg);
+        systems.gravity.gravitate(&reg);
         systems.movement.move(&reg);
+        systems.movement.applyPositionOffset(&reg);
         systems.collision.collide(&reg) catch |err| {
             std.debug.print("ERROR (systems.collision.collide): {}\n", .{err});
         };
+        systems.movement.endMovement(&reg);
         systems.drawing.beginDrawing();
         systems.drawing.draw(&reg);
         systems.drawing.endDrawing();
@@ -92,18 +96,39 @@ fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     reg.add(wallRight, Visual{ .color = ray.BROWN });
     reg.add(wallRight, Collision{});
 
+    // Box 1 (on ground)
     const box1 = reg.create();
     reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
     reg.add(box1, Body{ .width = 50, .height = 50 });
-    reg.add(box1, Visual{ .color = ray.GRAY });
+    reg.add(box1, Visual{ .color = ray.DARKGRAY });
     reg.add(box1, Collision{});
 
+    // Box 2 (in the air)
     const box2 = reg.create();
     reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
     reg.add(box2, Gravity{});
+    reg.add(box2, Movement{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
     reg.add(box2, Visual{ .color = ray.GRAY });
     reg.add(box2, Collision{});
+
+    // Box 3 (in the air)
+    const box3 = reg.create();
+    reg.add(box3, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 100 });
+    reg.add(box3, Gravity{});
+    reg.add(box3, Movement{});
+    reg.add(box3, Body{ .width = 50, .height = 50 });
+    reg.add(box3, Visual{ .color = ray.LIGHTGRAY });
+    reg.add(box3, Collision{});
+
+    // Box 4 (in the air)
+    const box4 = reg.create();
+    reg.add(box4, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 200 });
+    reg.add(box4, Gravity{});
+    reg.add(box4, Movement{});
+    reg.add(box4, Body{ .width = 50, .height = 50 });
+    reg.add(box4, Visual{ .color = ray.WHITE });
+    reg.add(box4, Collision{});
 
     const player = reg.create();
     reg.add(player, Player{});

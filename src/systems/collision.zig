@@ -32,8 +32,8 @@ fn prepareCollisionCheckData(
     colliderBody: Body,
 ) CollisionCheckData {
     const entityRect = ray.Rectangle{
-        .x = entityPosition.getAbsoluteX(entityBody.width),
-        .y = entityPosition.getAbsoluteY(entityBody.height),
+        .x = entityPosition.getAbsoluteTempX(entityBody.width),
+        .y = entityPosition.getAbsoluteTempY(entityBody.height),
         .width = entityBody.width,
         .height = entityBody.height,
     };
@@ -85,7 +85,7 @@ fn resolveCollision(
     bodyB: Body,
     hasGravity: bool,
 ) CollisionResolveError!Position {
-    var result = Position{ .x = positionA.x, .y = positionA.y };
+    var result = Position{ .x = positionA.tempX, .y = positionA.tempY };
     const collisionCheck = prepareCollisionCheckData(positionA, bodyA, positionB, bodyB);
     const collision = ray.GetCollisionRec(collisionCheck.entity, collisionCheck.collider);
 
@@ -151,8 +151,8 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
                     bodyB,
                     hasGravity,
                 );
-                positionA.x = newPosition.x;
-                positionA.y = newPosition.y;
+                positionA.tempX = newPosition.x;
+                positionA.tempY = newPosition.y;
 
                 currentIterations += 1;
             }

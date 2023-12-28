@@ -3,8 +3,18 @@
 pub const Position = struct {
     x: f32,
     y: f32,
+    tempX: f32 = 0,
+    tempY: f32 = 0,
     offsetX: f32 = 0,
     offsetY: f32 = 0,
+
+    pub fn getAbsoluteTempX(self: *const Position, width: f32) f32 {
+        return self.tempX - (width / 2);
+    }
+
+    pub fn getAbsoluteTempY(self: *const Position, height: f32) f32 {
+        return self.tempY - (height / 2);
+    }
 
     /// Convert the X coordinate relative to the entities center point to an
     /// absoulte X coordinate to be used for low level grid operations.
