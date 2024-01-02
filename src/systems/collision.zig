@@ -83,17 +83,18 @@ fn resolveCollision(
     bodyA: Body,
     positionB: Position,
     bodyB: Body,
-    hasGravity: bool,
+    potentialGravity: ?Gravity,
 ) CollisionResolveError!Position {
     var result = Position{ .x = positionA.tempX, .y = positionA.tempY };
     const collisionCheck = prepareCollisionCheckData(positionA, bodyA, positionB, bodyB);
     const collision = ray.GetCollisionRec(collisionCheck.entity, collisionCheck.collider);
+    const gravity = potentialGravity orelse Gravity{ .forceX = 0, .forceY = 0 };
 
     const causedByX =
-        movement.directionX != .none and
+        (movement.directionX != .none or gravity.forceX != 0) and
         isCollisionCause(collision.width, @abs(positionA.offsetX));
     const causedByY =
-        (movement.directionY != .none or hasGravity) and
+        (movement.directionY != .none or gravity.forceY != 0) and
         isCollisionCause(collision.height, @abs(positionA.offsetY));
 
     if (!causedByX and !causedByY) {
@@ -122,7 +123,6 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
         var positionA = view.get(Position, entity);
         const bodyA = view.getConst(Body, entity);
         const movement = view.getConst(Movement, entity);
-        const hasGravity = reg.has(Gravity, entity);
 
         var iterColliders = viewColliders.entityIterator();
         while (iterColliders.next()) |collider| {
@@ -149,7 +149,7 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
                     bodyA,
                     positionB,
                     bodyB,
-                    hasGravity,
+                    view.getConst(Gravity, entity),
                 );
                 positionA.tempX = newPosition.x;
                 positionA.tempY = newPosition.y;

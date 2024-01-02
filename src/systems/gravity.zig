@@ -11,9 +11,8 @@ pub fn gravitate(reg: *ecs.Registry) void {
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var position = view.get(Position, entity);
-        const gravityX: f32 = 0;
-        const gravityY: f32 = 3;
-        position.offsetX += gravityX;
-        position.offsetY += gravityY;
+        const gravity = view.getConst(Gravity, entity);
+        position.offsetX += gravity.forceX;
+        position.offsetY += gravity.forceY;
     }
 }
