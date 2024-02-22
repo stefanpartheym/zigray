@@ -18,10 +18,10 @@ pub fn build(b: *std.Build) void {
 
     const raylib_mod = b.addModule(
         "raylib",
-        .{ .source_file = .{ .path = "src/raylib.zig" } },
+        .{ .root_source_file = .{ .path = "src/raylib.zig" } },
     );
-    exe.addModule("raylib", raylib_mod);
-    exe.addModule("ecs", zigecs_dep.module("zig-ecs"));
+    exe.root_module.addImport("raylib", raylib_mod);
+    exe.root_module.addImport("ecs", zigecs_dep.module("zig-ecs"));
     exe.linkLibC(); // LibC is required to link against raylib.
     exe.linkSystemLibrary("raylib");
 
