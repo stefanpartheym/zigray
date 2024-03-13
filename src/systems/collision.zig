@@ -77,6 +77,26 @@ fn isCollisionCause(collisionValue: f32, positionOffset: f32) bool {
     return normalizedCollisionValue <= normalizedPositionOffset;
 }
 
+fn isCollisionCauseX(direction: MovementDirectionX, offset: f32) bool {
+    if (direction == .left) {
+        return offset < 0;
+    } else if (direction == .right) {
+        return offset > 0;
+    } else {
+        return false;
+    }
+}
+
+fn isCollisionCauseY(direction: MovementDirectionY, offset: f32) bool {
+    if (direction == .up) {
+        return offset < 0;
+    } else if (direction == .down) {
+        return offset > 0;
+    } else {
+        return false;
+    }
+}
+
 fn resolveCollision(
     movement: Movement,
     positionA: Position,
@@ -91,10 +111,10 @@ fn resolveCollision(
     const gravity = potentialGravity orelse Gravity{ .forceX = 0, .forceY = 0 };
 
     const causedByX =
-        (movement.directionX != .none or gravity.forceX != 0) and
+        (isCollisionCauseX(movement.directionX, positionA.offsetX) or gravity.forceX != 0) and
         isCollisionCause(collision.width, @abs(positionA.offsetX));
     const causedByY =
-        (movement.directionY != .none or gravity.forceY != 0) and
+        (isCollisionCauseY(movement.directionY, positionA.offsetY) or gravity.forceY != 0) and
         isCollisionCause(collision.height, @abs(positionA.offsetY));
 
     if (!causedByX and !causedByY) {
@@ -126,7 +146,7 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
 
         var iterColliders = viewColliders.entityIterator();
         while (iterColliders.next()) |collider| {
-            // Make sure not to check collisions for the same entity.
+            // Make sure not to check collisions the entity itself.
             if (collider == entity) {
                 continue;
             }
@@ -134,15 +154,8 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
             const positionB = view.getConst(Position, collider);
             const bodyB = view.getConst(Body, collider);
 
-            const maxIterations = 2;
-            var currentIterations: u8 = 0;
-            while (hasCollision(positionA.*, bodyA, positionB, bodyB)) {
-                // Make sure to return an error, if collision could not be
-                // resolved within 2 iterations.
-                if (currentIterations > maxIterations) {
-                    return CollisionSystemError.UnableToResolveCollision;
-                }
-
+            // Resolve collision only, if a collision is detected.
+            if (hasCollision(positionA.*, bodyA, positionB, bodyB)) {
                 const newPosition = try resolveCollision(
                     movement,
                     positionA.*,
@@ -153,8 +166,6 @@ pub fn collide(reg: *ecs.Registry) CollisionSystemError!void {
                 );
                 positionA.tempX = newPosition.x;
                 positionA.tempY = newPosition.y;
-
-                currentIterations += 1;
             }
         }
     }
