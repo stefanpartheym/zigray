@@ -39,6 +39,7 @@ pub fn main() void {
         systems.movement.applyPositionOffset(&reg);
         systems.collision.collide(&reg) catch |err| {
             std.debug.print("ERROR (systems.collision.collide): {}\n", .{err});
+            break;
         };
         systems.movement.endMovement(&reg);
         systems.drawing.beginDrawing();
