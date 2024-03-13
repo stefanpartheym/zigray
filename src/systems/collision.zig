@@ -11,7 +11,7 @@ const MovementDirectionY = components.MovementDirectionY;
 const Body = components.Body;
 const Collision = components.Collision;
 
-pub const CollisionResolveError = error{
+pub const CollisionResolutionError = error{
     NoCollisionCauseDetected,
 };
 
@@ -104,7 +104,7 @@ fn resolveCollision(
     positionB: Position,
     bodyB: Body,
     potentialGravity: ?Gravity,
-) CollisionResolveError!Position {
+) CollisionResolutionError!Position {
     var result = Position{ .x = positionA.tempX, .y = positionA.tempY };
     const collisionCheck = prepareCollisionCheckData(positionA, bodyA, positionB, bodyB);
     const collision = ray.GetCollisionRec(collisionCheck.entity, collisionCheck.collider);
@@ -118,7 +118,7 @@ fn resolveCollision(
         isCollisionCause(collision.height, @abs(positionA.offsetY));
 
     if (!causedByX and !causedByY) {
-        return CollisionResolveError.NoCollisionCauseDetected;
+        return CollisionResolutionError.NoCollisionCauseDetected;
     }
 
     if (causedByY) {
