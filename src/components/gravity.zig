@@ -1,4 +1,4 @@
 pub const Gravity = struct {
-    forceX: f32 = 0.0,
-    forceY: f32 = 3.5,
+    forceX: f32 = 0,
+    forceY: f32 = 1.5,
 };

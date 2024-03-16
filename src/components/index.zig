@@ -1,5 +1,6 @@
 pub const Position = @import("position.zig").Position;
 pub const Velocity = @import("velocity.zig").Velocity;
+pub const Speed = @import("speed.zig").Speed;
 pub const Gravity = @import("gravity.zig").Gravity;
 pub const Movement = @import("movement.zig").Movement;
 pub const MovementDirectionX = @import("movement.zig").MovementDirectionX;

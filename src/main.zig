@@ -9,6 +9,7 @@ const systems = @import("systems/index.zig");
 const components = @import("components/index.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
+const Speed = components.Speed;
 const Gravity = components.Gravity;
 const Body = components.Body;
 const Visual = components.Visual;
@@ -32,16 +33,13 @@ pub fn main() void {
 
     while (!shouldCloseWindow()) {
         systems.input.handleInput(&reg);
-        systems.movement.accelerate(&reg);
+
         systems.movement.beginMovement(&reg);
+        systems.movement.accelerate(&reg);
         systems.gravity.gravitate(&reg);
-        systems.movement.move(&reg);
-        systems.movement.applyPositionOffset(&reg);
-        systems.collision.collide(&reg) catch |err| {
-            std.debug.print("ERROR (systems.collision.collide): {}\n", .{err});
-            break;
-        };
+        systems.collision.collide(&reg);
         systems.movement.endMovement(&reg);
+
         systems.drawing.beginDrawing();
         systems.drawing.draw(&reg);
         systems.drawing.endDrawing();
@@ -107,8 +105,8 @@ fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     // Box 2 (in the air)
     const box2 = reg.create();
     reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
+    reg.add(box2, Velocity{});
     reg.add(box2, Gravity{});
-    reg.add(box2, Movement{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
     reg.add(box2, Visual{ .color = ray.GRAY });
     reg.add(box2, Collision{});
@@ -116,8 +114,8 @@ fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     // Box 3 (in the air)
     const box3 = reg.create();
     reg.add(box3, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 100 });
+    reg.add(box3, Velocity{});
     reg.add(box3, Gravity{});
-    reg.add(box3, Movement{});
     reg.add(box3, Body{ .width = 50, .height = 50 });
     reg.add(box3, Visual{ .color = ray.LIGHTGRAY });
     reg.add(box3, Collision{});
@@ -125,8 +123,8 @@ fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     // Box 4 (in the air)
     const box4 = reg.create();
     reg.add(box4, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 200 });
+    reg.add(box4, Velocity{});
     reg.add(box4, Gravity{});
-    reg.add(box4, Movement{});
     reg.add(box4, Body{ .width = 50, .height = 50 });
     reg.add(box4, Visual{ .color = ray.WHITE });
     reg.add(box4, Collision{});
@@ -134,7 +132,8 @@ fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
     const player = reg.create();
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
-    reg.add(player, Velocity{ .x = 8, .y = 8 });
+    reg.add(player, Velocity{});
+    reg.add(player, Speed{ .x = 3, .y = 3 });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
