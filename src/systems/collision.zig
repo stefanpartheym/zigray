@@ -23,7 +23,7 @@ pub fn collide(reg: *ecs.Registry) void {
         const entityBody = view.getConst(Body, entity);
         var entityCollision = view.get(Collision, entity);
 
-        const entityAabb = aabb.aabb_create(
+        const entityAabb = aabb.createAabb(
             entityPosition.getAbsoluteX(entityBody.width),
             entityPosition.getAbsoluteY(entityBody.height),
             entityBody.width,
@@ -31,7 +31,7 @@ pub fn collide(reg: *ecs.Registry) void {
             entityVelocity.x,
             entityVelocity.y,
         );
-        const entityBroadphaseAabb = aabb.aabb_createBroadphase(
+        const entityBroadphaseAabb = aabb.createBroadphaseAabb(
             entityPosition.getAbsoluteX(entityBody.width),
             entityPosition.getAbsoluteY(entityBody.height),
             entityBody.width,
@@ -49,7 +49,7 @@ pub fn collide(reg: *ecs.Registry) void {
 
             const colliderPosition = view.getConst(Position, collider);
             const colliderBody = view.getConst(Body, collider);
-            const colliderAabb = aabb.aabb_create(
+            const colliderAabb = aabb.createAabb(
                 colliderPosition.getAbsoluteX(colliderBody.width),
                 colliderPosition.getAbsoluteY(colliderBody.height),
                 colliderBody.width,
@@ -58,8 +58,8 @@ pub fn collide(reg: *ecs.Registry) void {
                 0,
             );
 
-            if (aabb.aabb_check(entityBroadphaseAabb, colliderAabb)) {
-                const sweepResult = aabb.aabb_sweep(entityAabb, colliderAabb);
+            if (aabb.check(entityBroadphaseAabb, colliderAabb)) {
+                const sweepResult = aabb.sweep(entityAabb, colliderAabb);
                 entityCollision.aabbSweepResult.assign(sweepResult);
 
                 if (sweepResult.time < 1) {

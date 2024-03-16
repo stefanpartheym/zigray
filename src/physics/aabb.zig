@@ -1,9 +1,5 @@
 const math = @import("std").math;
-
-pub const Velocity = struct {
-    x: f32,
-    y: f32,
-};
+const Velocity = @import("./velocity.zig").Velocity;
 
 pub const Aabb = struct {
     x: f32,
@@ -14,13 +10,13 @@ pub const Aabb = struct {
     vy: f32,
 };
 
-pub const AabbSweptResult = struct {
+pub const AabbSweepResult = struct {
     normalx: f32 = 0,
     normaly: f32 = 0,
     time: f32 = 1,
     remainingTime: f32 = 0,
 
-    pub fn assign(self: *AabbSweptResult, other: AabbSweptResult) void {
+    pub fn assign(self: *AabbSweepResult, other: AabbSweepResult) void {
         self.time = other.time;
         self.remainingTime = other.remainingTime;
         self.normalx = other.normalx;
@@ -28,11 +24,11 @@ pub const AabbSweptResult = struct {
     }
 };
 
-pub fn aabb_create(x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32) Aabb {
+pub fn createAabb(x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32) Aabb {
     return Aabb{ .x = x, .y = y, .w = w, .h = h, .vx = vx, .vy = vy };
 }
 
-pub fn aabb_createBroadphase(x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32) Aabb {
+pub fn createBroadphaseAabb(x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32) Aabb {
     const pos_x = if (vx > 0) x else x + vx;
     const pos_y = if (vy > 0) y else y + vy;
     const width = if (vx > 0) vx + w else w - vx;
@@ -40,7 +36,7 @@ pub fn aabb_createBroadphase(x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32) A
     return Aabb{ .x = pos_x, .y = pos_y, .w = width, .h = height, .vx = vx, .vy = vy };
 }
 
-pub fn aabb_check(a: Aabb, b: Aabb) bool {
+pub fn check(a: Aabb, b: Aabb) bool {
     return a.x < b.x + b.w and // left edge is past right edge of obstacle?
         a.x + a.w > b.x and // right edge is past left edge of obstacle?
         a.y < b.y + b.h and // top edge is past bottom edge of obstacle?
@@ -48,7 +44,7 @@ pub fn aabb_check(a: Aabb, b: Aabb) bool {
 
 }
 
-pub fn aabb_sweep(a: Aabb, b: Aabb) AabbSweptResult {
+pub fn sweep(a: Aabb, b: Aabb) AabbSweepResult {
     var xInvEntry: f32 = undefined;
     var xInvExit: f32 = undefined;
     var yInvEntry: f32 = undefined;
@@ -138,7 +134,7 @@ pub fn aabb_sweep(a: Aabb, b: Aabb) AabbSweptResult {
     }
 }
 
-pub fn responseSlide(velocity: Velocity, sweepResult: AabbSweptResult) Velocity {
+pub fn responseSlide(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
     // Respond to collision by sliding the entity along the
     // edge of the collider.
     const dotprod =
@@ -153,7 +149,7 @@ pub fn responseSlide(velocity: Velocity, sweepResult: AabbSweptResult) Velocity 
 }
 
 /// Push entity along the collision edge.
-pub fn responsePush(velocity: Velocity, sweepResult: AabbSweptResult) Velocity {
+pub fn responsePush(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
     const magnitude =
         math.sqrt((velocity.x * velocity.x + velocity.y * velocity.y)) *
         sweepResult.remainingTime;
@@ -172,7 +168,7 @@ pub fn responsePush(velocity: Velocity, sweepResult: AabbSweptResult) Velocity {
 }
 
 // Bounce
-pub fn responseBounce(velocity: Velocity, sweepResult: AabbSweptResult) Velocity {
+pub fn responseBounce(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
     var result: Velocity = .{
         .x = velocity.x * sweepResult.remainingTime,
         .y = velocity.y * sweepResult.remainingTime,
