@@ -30,7 +30,6 @@ pub fn handleCollision(engine: *Engine) void {
         const entityPosition = view.get(Position, entity);
         var entityVelocity = view.get(Velocity, entity);
         const entityBody = view.getConst(Body, entity);
-        var entityCollision = view.get(Collision, entity);
 
         const entityAabb = aabb.createAabb(
             entityPosition.getAbsoluteX(entityBody.width),
@@ -69,8 +68,6 @@ pub fn handleCollision(engine: *Engine) void {
 
             if (aabb.check(entityBroadphaseAabb, colliderAabb)) {
                 const sweepResult = aabb.sweep(entityAabb, colliderAabb);
-                entityCollision.aabbSweepResult.assign(sweepResult);
-
                 if (sweepResult.time < 1) {
                     const responseVelocity = aabb.responseSlideFast(
                         .{ .x = entityVelocity.x, .y = entityVelocity.y },
@@ -79,8 +76,6 @@ pub fn handleCollision(engine: *Engine) void {
                     entityVelocity.x = responseVelocity.x;
                     entityVelocity.y = responseVelocity.y;
                 }
-            } else {
-                entityCollision.aabbSweepResult.assign(.{});
             }
         }
     }

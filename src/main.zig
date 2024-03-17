@@ -2,19 +2,7 @@ const std = @import("std");
 const ray = @import("raylib");
 
 const Engine = @import("engine/main.zig").Engine;
-// Systems
 const systems = @import("systems/main.zig");
-// Components
-const components = @import("components/main.zig");
-const Position = components.Position;
-const Velocity = components.Velocity;
-const Speed = components.Speed;
-const Gravity = components.Gravity;
-const Body = components.Body;
-const Visual = components.Visual;
-const Collision = components.Collision;
-const Player = components.Player;
-const Movement = components.Movement;
 
 pub fn main() void {
     const name = "zigray-test";
@@ -60,6 +48,17 @@ pub fn main() void {
 }
 
 fn setupEntities(engine: *Engine) void {
+    const components = @import("components/main.zig");
+    const Position = components.Position;
+    const Velocity = components.Velocity;
+    const Speed = components.Speed;
+    const Gravity = components.Gravity;
+    const Body = components.Body;
+    const Visual = components.Visual;
+    const Collision = components.Collision;
+    const Player = components.Player;
+    const Movement = components.Movement;
+
     var reg = &(engine.registry);
 
     const screenWidth = engine.state.display.width;
