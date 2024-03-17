@@ -60,17 +60,17 @@ pub fn drawBoundingBox(engine: *Engine, entity: ecs.Entity) void {
         velocityY,
     );
     ray.DrawRectangleLines(
-        @intFromFloat(entityAabb.x),
-        @intFromFloat(entityAabb.y),
-        @intFromFloat(entityAabb.w),
-        @intFromFloat(entityAabb.h),
-        ray.LIGHTGRAY,
-    );
-    ray.DrawRectangleLines(
         @intFromFloat(entityAabb.x + entityAabb.velocityX),
         @intFromFloat(entityAabb.y + entityAabb.velocityY),
         @intFromFloat(entityAabb.w),
         @intFromFloat(entityAabb.h),
-        ray.WHITE,
+        ray.YELLOW,
+    );
+    ray.DrawRectangleLines(
+        @intFromFloat(entityAabb.x),
+        @intFromFloat(entityAabb.y),
+        @intFromFloat(entityAabb.w),
+        @intFromFloat(entityAabb.h),
+        ray.RED,
     );
 }
