@@ -21,6 +21,12 @@ pub fn main() void {
                 .targetFps = 60,
                 .useHighDpi = true,
             },
+            .physics = .{
+                .gravity = .{
+                    .forceX = 0,
+                    .forceY = 3.5,
+                },
+            },
         },
     );
     defer engine.deinit();
@@ -123,7 +129,11 @@ fn setupEntities(engine: *Engine) void {
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
-    reg.add(player, Speed{ .x = 5, .y = 6.5 });
+    const engineGravity = engine.state.physics.gravity;
+    reg.add(player, Speed{
+        .x = 5 + engineGravity.forceX,
+        .y = 5 + engineGravity.forceY,
+    });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });

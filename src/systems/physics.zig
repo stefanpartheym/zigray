@@ -10,13 +10,14 @@ const Collision = components.Collision;
 
 /// Gravitation system
 pub fn handleGravitation(engine: *Engine) void {
+    const engineGravity = engine.state.physics.gravity;
     var view = engine.registry.view(.{ Velocity, Gravity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
         const gravity = view.getConst(Gravity, entity);
-        velocity.x += gravity.forceX;
-        velocity.y += gravity.forceY;
+        velocity.x += if (gravity.forceX) |forceX| forceX else engineGravity.forceX;
+        velocity.y += if (gravity.forceY) |forceY| forceY else engineGravity.forceY;
     }
 }
 

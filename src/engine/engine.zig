@@ -14,6 +14,12 @@ pub const EngineInitOptions = struct {
         useHighDpi: bool,
         title: [:0]const u8,
     },
+    physics: struct {
+        gravity: struct {
+            forceX: f32,
+            forceY: f32,
+        },
+    },
 };
 
 pub const Engine = struct {
@@ -36,6 +42,12 @@ pub const Engine = struct {
                     .targetFps = options.display.targetFps,
                     .useHighDpi = options.display.useHighDpi,
                     .title = options.display.title,
+                },
+                .physics = .{
+                    .gravity = .{
+                        .forceX = options.physics.gravity.forceX,
+                        .forceY = options.physics.gravity.forceY,
+                    },
                 },
             },
         };
