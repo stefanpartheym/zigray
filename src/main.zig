@@ -1,6 +1,7 @@
 const std = @import("std");
-const ecs = @import("ecs");
 const ray = @import("raylib");
+
+const Engine = @import("./engine/index.zig").Engine;
 
 // Systems
 const systems = @import("systems/index.zig");
@@ -27,21 +28,22 @@ pub fn main() void {
     initialize(name, version, screenWidth, screenHeight, fps);
     defer finalize();
 
-    var reg = ecs.Registry.init(std.heap.page_allocator);
+    var engine = Engine.init(std.heap.page_allocator, false);
+    defer engine.deinit();
 
-    setupEntities(&reg, screenWidth, screenHeight);
+    setupEntities(&engine, screenWidth, screenHeight);
 
     while (!shouldCloseWindow()) {
-        systems.input.handleInput(&reg);
+        systems.input.handleInput(&engine);
 
-        systems.movement.beginMovement(&reg);
-        systems.movement.accelerate(&reg);
-        systems.gravity.gravitate(&reg);
-        systems.collision.collide(&reg);
-        systems.movement.endMovement(&reg);
+        systems.movement.beginMovement(&engine);
+        systems.movement.accelerate(&engine);
+        systems.gravity.gravitate(&engine);
+        systems.collision.collide(&engine);
+        systems.movement.endMovement(&engine);
 
         systems.drawing.beginDrawing();
-        systems.drawing.draw(&reg);
+        systems.drawing.draw(&engine);
         systems.drawing.endDrawing();
     }
 }
@@ -73,7 +75,9 @@ fn finalize() void {
     ray.CloseWindow();
 }
 
-fn setupEntities(reg: *ecs.Registry, screenWidth: f32, screenHeight: f32) void {
+fn setupEntities(engine: *Engine, screenWidth: f32, screenHeight: f32) void {
+    var reg = &(engine.registry);
+
     const floor = reg.create();
     reg.add(floor, Position{ .x = screenWidth / 2, .y = screenHeight - 5 });
     reg.add(floor, Body{ .width = screenWidth, .height = 10 });

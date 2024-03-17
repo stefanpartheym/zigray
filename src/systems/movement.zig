@@ -1,6 +1,5 @@
 const std = @import("std");
-
-const ecs = @import("ecs");
+const Engine = @import("../engine/index.zig").Engine;
 const components = @import("../components/index.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
@@ -10,8 +9,8 @@ const Collision = components.Collision;
 const Gravity = components.Gravity;
 
 /// Acceleration system
-pub fn accelerate(reg: *ecs.Registry) void {
-    var view = reg.view(.{ Velocity, Speed, Movement }, .{});
+pub fn accelerate(engine: *Engine) void {
+    var view = engine.registry.view(.{ Velocity, Speed, Movement }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
@@ -33,8 +32,8 @@ pub fn accelerate(reg: *ecs.Registry) void {
 }
 
 /// Movement system (begin)
-pub fn beginMovement(reg: *ecs.Registry) void {
-    var view = reg.view(.{ Position, Velocity }, .{});
+pub fn beginMovement(engine: *Engine) void {
+    var view = engine.registry.view(.{ Position, Velocity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
@@ -44,12 +43,25 @@ pub fn beginMovement(reg: *ecs.Registry) void {
 }
 
 /// Movement system (end)
-pub fn endMovement(reg: *ecs.Registry) void {
-    var view = reg.view(.{ Position, Velocity, Collision }, .{});
+pub fn endMovement(engine: *Engine) void {
+    var view = engine.registry.view(.{ Position, Velocity, Collision }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var position = view.get(Position, entity);
         const velocity = view.getConst(Velocity, entity);
+
+        // TODO:
+        // The following code is assumed to be the default collision response
+        // without any sliding, pushing or bouncing the entity.
+        // As we are already responding to the collision in the collision
+        // system, it would be incorrect to do it twice and could lead to
+        // unpleasent behavior, like extremely slow sliding of the entity.
+        // Instead, the movement should be simply done like the following:
+        // ```zig
+        // position.x += velocity.x;
+        // position.y += velocity.y;
+        // ```
+
         const collision = view.getConst(Collision, entity);
         position.x += velocity.x * collision.aabbSweepResult.time;
         position.y += velocity.y * collision.aabbSweepResult.time;

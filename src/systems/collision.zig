@@ -1,5 +1,5 @@
 const std = @import("std");
-const ecs = @import("ecs");
+const Engine = @import("../engine/engine.zig").Engine;
 const components = @import("../components/index.zig");
 const aabb = @import("../physics/aabb.zig");
 const Position = components.Position;
@@ -12,9 +12,9 @@ const Body = components.Body;
 const Collision = components.Collision;
 
 /// Collision detection and response system
-pub fn collide(reg: *ecs.Registry) void {
-    var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
-    var viewColliders = reg.view(.{ Position, Body, Collision }, .{});
+pub fn collide(engine: *Engine) void {
+    var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
+    var viewColliders = engine.registry.view(.{ Position, Body, Collision }, .{});
 
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -63,12 +63,12 @@ pub fn collide(reg: *ecs.Registry) void {
                 entityCollision.aabbSweepResult.assign(sweepResult);
 
                 if (sweepResult.time < 1) {
-                    const newVelocity = aabb.responseSlide(
+                    const responseVelocity = aabb.responseSlide(
                         .{ .x = entityVelocity.x, .y = entityVelocity.y },
                         sweepResult,
                     );
-                    entityVelocity.x = newVelocity.x;
-                    entityVelocity.y = newVelocity.y;
+                    entityVelocity.x = responseVelocity.x;
+                    entityVelocity.y = responseVelocity.y;
                 }
             } else {
                 entityCollision.aabbSweepResult.assign(.{});

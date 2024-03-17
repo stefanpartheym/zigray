@@ -1,5 +1,5 @@
 const ray = @import("raylib");
-const ecs = @import("ecs");
+const Engine = @import("../engine/index.zig").Engine;
 const components = @import("../components/index.zig");
 const Movement = components.Movement;
 const Player = components.Player;
@@ -26,11 +26,16 @@ fn getDirectionY() MovementDirectionY {
     }
 }
 
-pub fn handleInput(reg: *ecs.Registry) void {
+pub fn handleInput(engine: *Engine) void {
+    // Toggle debug mode, if relevant.
+    if (ray.IsKeyPressed(ray.KEY_F1)) {
+        engine.toggleDebugMode();
+    }
+
     const directionX: MovementDirectionX = getDirectionX();
     const directionY: MovementDirectionY = getDirectionY();
 
-    var view = reg.view(.{ Movement, Player }, .{});
+    var view = engine.registry.view(.{ Movement, Player }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var movement = view.get(Movement, entity);
