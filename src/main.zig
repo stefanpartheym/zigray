@@ -25,13 +25,27 @@ pub fn main() void {
     const screenHeight = 600;
     const fps = 60;
 
-    initialize(name, version, screenWidth, screenHeight, fps);
-    defer finalize();
+    std.debug.print("## {s} (v{s}) ##\n", .{ name, version });
 
-    var engine = Engine.init(std.heap.page_allocator, false);
+    var engine = Engine.init(
+        std.heap.page_allocator,
+        .{
+            .debug = .{ .enable = false },
+            .display = .{
+                .title = name ++ " (v" ++ version ++ ")",
+                .width = screenWidth,
+                .height = screenHeight,
+                .targetFps = fps,
+                .useHighDpi = true,
+            },
+        },
+    );
     defer engine.deinit();
 
-    setupEntities(&engine, screenWidth, screenHeight);
+    setupEntities(&engine);
+
+    engine.start();
+    defer engine.stop();
 
     while (!shouldCloseWindow()) {
         systems.input.handleInput(&engine);
@@ -52,31 +66,11 @@ fn shouldCloseWindow() bool {
     return ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q);
 }
 
-fn initialize(
-    comptime name: []const u8,
-    comptime version: []const u8,
-    screenWidth: f32,
-    screenHeight: f32,
-    fps: u8,
-) void {
-    std.debug.print("## {s} (v{s}) ##\n", .{ name, version });
-
-    ray.SetConfigFlags(ray.FLAG_WINDOW_HIGHDPI);
-    ray.SetTraceLogLevel(ray.LOG_WARNING);
-    ray.SetTargetFPS(fps);
-    ray.InitWindow(
-        @as(i32, @intFromFloat(screenWidth)),
-        @as(i32, @intFromFloat(screenHeight)),
-        name ++ " (v" ++ version ++ ")",
-    );
-}
-
-fn finalize() void {
-    ray.CloseWindow();
-}
-
-fn setupEntities(engine: *Engine, screenWidth: f32, screenHeight: f32) void {
+fn setupEntities(engine: *Engine) void {
     var reg = &(engine.registry);
+
+    const screenWidth = engine.state.display.width;
+    const screenHeight = engine.state.display.height;
 
     const floor = reg.create();
     reg.add(floor, Position{ .x = screenWidth / 2, .y = screenHeight - 5 });
