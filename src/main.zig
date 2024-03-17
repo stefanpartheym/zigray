@@ -1,13 +1,11 @@
 const std = @import("std");
 const ray = @import("raylib");
 
-const Engine = @import("./engine/index.zig").Engine;
-
+const Engine = @import("engine/main.zig").Engine;
 // Systems
-const systems = @import("systems/index.zig");
-
+const systems = @import("systems/main.zig");
 // Components
-const components = @import("components/index.zig");
+const components = @import("components/main.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
 const Speed = components.Speed;

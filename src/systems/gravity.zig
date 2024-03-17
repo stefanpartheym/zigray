@@ -1,6 +1,6 @@
 const std = @import("std");
-const Engine = @import("../engine/index.zig").Engine;
-const components = @import("../components/index.zig");
+const Engine = @import("../engine/main.zig").Engine;
+const components = @import("../components/main.zig");
 const Velocity = components.Velocity;
 const Gravity = components.Gravity;
 
