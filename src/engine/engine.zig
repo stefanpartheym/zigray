@@ -12,7 +12,7 @@ pub const EngineInitOptions = struct {
         height: f32 = 600,
         targetFps: u8 = 60,
         useHighDpi: bool = true,
-        title: [*c]const u8 = "",
+        title: [:0]const u8 = "",
     },
 };
 

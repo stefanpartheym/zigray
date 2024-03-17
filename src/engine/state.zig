@@ -7,7 +7,7 @@ pub const DisplayState = struct {
     height: f32,
     targetFps: u8,
     useHighDpi: bool,
-    title: [*c]const u8,
+    title: [:0]const u8,
 };
 
 pub const EngineState = struct {
