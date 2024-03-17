@@ -1,7 +1,7 @@
 const std = @import("std");
 const ecs = @import("ecs");
 const ray = @import("raylib");
-const state = @import("./state.zig");
+const state = @import("state.zig");
 
 pub const EngineInitOptions = struct {
     debug: struct {

@@ -1,1 +1,1 @@
-pub const Engine = @import("./engine.zig").Engine;
+pub const Engine = @import("engine.zig").Engine;

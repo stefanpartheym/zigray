@@ -1,5 +1,5 @@
 const math = @import("std").math;
-const Velocity = @import("./velocity.zig").Velocity;
+const Velocity = @import("velocity.zig").Velocity;
 
 pub const Aabb = struct {
     x: f32,
