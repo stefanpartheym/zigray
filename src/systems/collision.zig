@@ -1,13 +1,10 @@
 const std = @import("std");
 const Engine = @import("../engine/engine.zig").Engine;
-const components = @import("../components/index.zig");
 const aabb = @import("../physics/aabb.zig");
+const components = @import("../components/index.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
 const Gravity = components.Gravity;
-const Movement = components.Movement;
-const MovementDirectionX = components.MovementDirectionX;
-const MovementDirectionY = components.MovementDirectionY;
 const Body = components.Body;
 const Collision = components.Collision;
 
@@ -63,7 +60,7 @@ pub fn collide(engine: *Engine) void {
                 entityCollision.aabbSweepResult.assign(sweepResult);
 
                 if (sweepResult.time < 1) {
-                    const responseVelocity = aabb.responseSlide(
+                    const responseVelocity = aabb.responseSlideFast(
                         .{ .x = entityVelocity.x, .y = entityVelocity.y },
                         sweepResult,
                     );

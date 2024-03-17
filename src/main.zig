@@ -137,7 +137,7 @@ fn setupEntities(engine: *Engine, screenWidth: f32, screenHeight: f32) void {
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
-    reg.add(player, Speed{ .x = 3, .y = 3 });
+    reg.add(player, Speed{ .x = 5, .y = 6.5 });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });

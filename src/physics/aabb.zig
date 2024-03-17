@@ -170,6 +170,21 @@ pub fn sweep(a: Aabb, b: Aabb) AabbSweepResult {
 
 /// Respond to AABB collision by sliding the entity along the edge of the
 /// collider.
+/// Unlike the `responseSlide` function, this function is used for fast sliding
+/// and hence will not take the `sweepResult.remainingTime` into account.
+pub fn responseSlideFast(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
+    const dotProduct =
+        (velocity.x * sweepResult.normalY +
+        velocity.y * sweepResult.normalX);
+
+    return .{
+        .y = dotProduct * sweepResult.normalX,
+        .x = dotProduct * sweepResult.normalY,
+    };
+}
+
+/// Respond to AABB collision by sliding the entity along the edge of the
+/// collider.
 pub fn responseSlide(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
     const dotprod =
         (velocity.x * sweepResult.normalY +
