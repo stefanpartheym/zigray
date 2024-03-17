@@ -10,17 +10,17 @@ const Visual = components.Visual;
 const Collision = components.Collision;
 const Velocity = components.Velocity;
 
-pub fn beginDrawing() void {
+pub fn beginRendering() void {
     ray.BeginDrawing();
     ray.ClearBackground(ray.BLACK);
 }
 
-pub fn endDrawing() void {
+pub fn endRendering() void {
     ray.DrawFPS(10, 10);
     ray.EndDrawing();
 }
 
-pub fn draw(engine: *Engine) void {
+pub fn render(engine: *Engine) void {
     var view = engine.registry.view(.{ Position, Body, Visual }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -36,12 +36,12 @@ pub fn draw(engine: *Engine) void {
         );
 
         if (engine.isDebugModeEnabled() and engine.registry.has(Collision, entity)) {
-            drawBoundingBox(engine, entity);
+            renderBoundingBox(engine, entity);
         }
     }
 }
 
-pub fn drawBoundingBox(engine: *Engine, entity: ecs.Entity) void {
+pub fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
     var velocityX: f32 = 0;
     var velocityY: f32 = 0;
     if (engine.registry.has(Velocity, entity)) {

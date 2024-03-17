@@ -8,8 +8,20 @@ const Gravity = components.Gravity;
 const Body = components.Body;
 const Collision = components.Collision;
 
+/// Gravitation system
+pub fn handleGravitation(engine: *Engine) void {
+    var view = engine.registry.view(.{ Velocity, Gravity }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var velocity = view.get(Velocity, entity);
+        const gravity = view.getConst(Gravity, entity);
+        velocity.x += gravity.forceX;
+        velocity.y += gravity.forceY;
+    }
+}
+
 /// Collision detection and response system
-pub fn collide(engine: *Engine) void {
+pub fn handleCollision(engine: *Engine) void {
     var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
     var viewColliders = engine.registry.view(.{ Position, Body, Collision }, .{});
 

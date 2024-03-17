@@ -47,13 +47,13 @@ pub fn main() void {
 
         systems.movement.beginMovement(&engine);
         systems.movement.accelerate(&engine);
-        systems.gravity.gravitate(&engine);
-        systems.collision.collide(&engine);
+        systems.physics.handleGravitation(&engine);
+        systems.physics.handleCollision(&engine);
         systems.movement.endMovement(&engine);
 
-        systems.drawing.beginDrawing();
-        systems.drawing.draw(&engine);
-        systems.drawing.endDrawing();
+        systems.rendering.beginRendering();
+        systems.rendering.render(&engine);
+        systems.rendering.endRendering();
 
         systems.input.updateEngineStatus(&engine);
     }
