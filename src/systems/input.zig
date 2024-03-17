@@ -45,3 +45,12 @@ pub fn handleInput(engine: *Engine) void {
         movement.directionY = directionY;
     }
 }
+
+/// Update the engine's status on certain inputs.
+/// For instance, if [Q] is pressed or if the user closes the window, the engine
+/// will be stopped.
+pub fn updateEngineStatus(engine: *Engine) void {
+    if (ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q)) {
+        engine.changeStatus(.STOPPED);
+    }
+}

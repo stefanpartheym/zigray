@@ -21,9 +21,6 @@ const Movement = components.Movement;
 pub fn main() void {
     const name = "zigray-test";
     const version = "0.0.1";
-    const screenWidth = 800;
-    const screenHeight = 600;
-    const fps = 60;
 
     std.debug.print("## {s} (v{s}) ##\n", .{ name, version });
 
@@ -33,9 +30,9 @@ pub fn main() void {
             .debug = .{ .enable = false },
             .display = .{
                 .title = name ++ " (v" ++ version ++ ")",
-                .width = screenWidth,
-                .height = screenHeight,
-                .targetFps = fps,
+                .width = 800,
+                .height = 600,
+                .targetFps = 60,
                 .useHighDpi = true,
             },
         },
@@ -47,7 +44,7 @@ pub fn main() void {
     engine.start();
     defer engine.stop();
 
-    while (!shouldCloseWindow()) {
+    while (engine.isRunning()) {
         systems.input.handleInput(&engine);
 
         systems.movement.beginMovement(&engine);
@@ -59,11 +56,9 @@ pub fn main() void {
         systems.drawing.beginDrawing();
         systems.drawing.draw(&engine);
         systems.drawing.endDrawing();
-    }
-}
 
-fn shouldCloseWindow() bool {
-    return ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q);
+        systems.input.updateEngineStatus(&engine);
+    }
 }
 
 fn setupEntities(engine: *Engine) void {

@@ -8,11 +8,11 @@ pub const EngineInitOptions = struct {
         enable: bool = false,
     },
     display: struct {
-        width: f32 = 800,
-        height: f32 = 600,
-        targetFps: u8 = 60,
-        useHighDpi: bool = true,
-        title: [:0]const u8 = "",
+        targetFps: u8 = 160,
+        width: f32,
+        height: f32,
+        useHighDpi: bool,
+        title: [:0]const u8,
     },
 };
 
@@ -26,6 +26,7 @@ pub const Engine = struct {
             .allocator = allocator,
             .registry = ecs.Registry.init(allocator),
             .state = state.EngineState{
+                .status = .STOPPED,
                 .debug = .{
                     .enabled = options.debug.enable,
                 },
@@ -44,7 +45,7 @@ pub const Engine = struct {
         self.registry.deinit();
     }
 
-    pub fn start(self: *const Engine) void {
+    pub fn start(self: *Engine) void {
         const display = self.state.display;
         if (display.useHighDpi) {
             ray.SetConfigFlags(ray.FLAG_WINDOW_HIGHDPI);
@@ -56,11 +57,21 @@ pub const Engine = struct {
             @as(i32, @intFromFloat(display.height)),
             display.title,
         );
+
+        self.changeStatus(.RUNNING);
     }
 
     pub fn stop(self: *const Engine) void {
         _ = self;
         ray.CloseWindow();
+    }
+
+    pub fn changeStatus(self: *Engine, newStatus: state.EngineStatus) void {
+        self.state.status = newStatus;
+    }
+
+    pub fn isRunning(self: *const Engine) bool {
+        return self.state.status == .RUNNING;
     }
 
     pub fn toggleDebugMode(self: *Engine) void {

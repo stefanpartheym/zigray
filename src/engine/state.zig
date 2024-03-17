@@ -10,7 +10,13 @@ pub const DisplayState = struct {
     title: [:0]const u8,
 };
 
+pub const EngineStatus = enum {
+    STOPPED,
+    RUNNING,
+};
+
 pub const EngineState = struct {
+    status: EngineStatus,
     debug: DebugState,
     display: DisplayState,
 };
