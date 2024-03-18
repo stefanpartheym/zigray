@@ -22,7 +22,17 @@ pub fn handleGravitation(engine: *Engine) void {
 }
 
 /// Collision detection and response system
-pub fn handleCollision(engine: *Engine) void {
+pub fn handleCollision(engine: *Engine, iterations: usize) void {
+    for (0..iterations) |_| {
+        handleCollisionOnce(engine);
+    }
+}
+
+/// Detect and handle collisions.
+/// A collision response could potentially lead to new collisions. Thus, it is
+/// recommended to invoke this function multiple times per frame.
+/// Use `handleCollision` and pass the number of iterations for this purpose.
+pub fn handleCollisionOnce(engine: *Engine) void {
     var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
     var viewColliders = engine.registry.view(.{ Position, Body, Collision }, .{});
 

@@ -171,14 +171,14 @@ pub fn sweep(a: Aabb, b: Aabb) AabbSweepResult {
 /// Respond to AABB collision by sliding the entity along the edge of the
 /// collider.
 pub fn responseSlide(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
-    const dotprod =
+    const dotProduct =
         (velocity.x * sweepResult.normalY +
         velocity.y * sweepResult.normalX) *
         sweepResult.remainingTime;
 
     return .{
-        .y = dotprod * sweepResult.normalX,
-        .x = dotprod * sweepResult.normalY,
+        .y = dotProduct * sweepResult.normalX,
+        .x = dotProduct * sweepResult.normalY,
     };
 }
 
@@ -188,17 +188,17 @@ pub fn responsePush(velocity: Velocity, sweepResult: AabbSweepResult) Velocity {
     const magnitude =
         math.sqrt((velocity.x * velocity.x + velocity.y * velocity.y)) *
         sweepResult.remainingTime;
-    var dotprod = velocity.x * sweepResult.normalY + velocity.y * sweepResult.normalX;
+    var dotProduct = velocity.x * sweepResult.normalY + velocity.y * sweepResult.normalX;
 
-    if (dotprod > 0) {
-        dotprod = 1;
-    } else if (dotprod < 0) {
-        dotprod = -1;
+    if (dotProduct > 0) {
+        dotProduct = 1;
+    } else if (dotProduct < 0) {
+        dotProduct = -1;
     }
 
     return .{
-        .x = dotprod * sweepResult.normalY * magnitude,
-        .y = dotprod * sweepResult.normalX * magnitude,
+        .x = dotProduct * sweepResult.normalY * magnitude,
+        .y = dotProduct * sweepResult.normalX * magnitude,
     };
 }
 
