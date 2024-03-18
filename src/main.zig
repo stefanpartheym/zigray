@@ -42,7 +42,12 @@ pub fn main() void {
         systems.movement.beginMovement(&engine);
         systems.movement.accelerate(&engine);
         systems.physics.handleGravitation(&engine);
+
+        // Handle collision twice to correct potential new collisions caused by
+        // the previous collision response.
         systems.physics.handleCollision(&engine);
+        systems.physics.handleCollision(&engine);
+
         systems.movement.endMovement(&engine);
 
         systems.rendering.beginRendering();

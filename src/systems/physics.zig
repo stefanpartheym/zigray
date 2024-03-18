@@ -69,13 +69,25 @@ pub fn handleCollision(engine: *Engine) void {
 
             if (aabb.check(entityBroadphaseAabb, colliderAabb)) {
                 const sweepResult = aabb.sweep(entityAabb, colliderAabb);
+                // Check if there is a collision:
+                // Collision time < 1 indicates that there is a collision.
+                // Collision time >= 1 indicates that there is no collision.
                 if (sweepResult.time < 1) {
-                    const responseVelocity = aabb.responseSlideFast(
+                    // Calculate the corrected velocity based on the collision
+                    // time.
+                    const correctedVelocity: Velocity = .{
+                        .x = entityVelocity.x * sweepResult.time,
+                        .y = entityVelocity.y * sweepResult.time,
+                    };
+                    // Calculate the remaining velocity in response to the
+                    // collision.
+                    const responseVelocity = aabb.responseSlide(
                         .{ .x = entityVelocity.x, .y = entityVelocity.y },
                         sweepResult,
                     );
-                    entityVelocity.x = responseVelocity.x;
-                    entityVelocity.y = responseVelocity.y;
+                    // Update the entity's velocity accordingly.
+                    entityVelocity.x = correctedVelocity.x + responseVelocity.x;
+                    entityVelocity.y = correctedVelocity.y + responseVelocity.y;
                 }
             }
         }
