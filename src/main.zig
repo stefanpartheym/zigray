@@ -37,7 +37,7 @@ pub fn main() void {
     defer engine.stop();
 
     while (engine.isRunning()) {
-        systems.input.handleInput(&engine);
+        systems.input.topDown.handleInput(&engine);
 
         systems.movement.beginMovement(&engine);
         systems.movement.accelerate(&engine);
@@ -49,7 +49,7 @@ pub fn main() void {
         systems.rendering.render(&engine);
         systems.rendering.endRendering();
 
-        systems.input.updateEngineStatus(&engine);
+        systems.input.common.handleInput(&engine);
     }
 }
 

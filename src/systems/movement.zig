@@ -22,10 +22,11 @@ pub fn accelerate(engine: *Engine) void {
             velocity.x += speed.x;
         }
 
+        const jumpFactor = @as(f32, if (movement.jump) 20.0 else 1.0);
         if (movement.directionY == .up) {
-            velocity.y += -speed.y;
+            velocity.y += -speed.y * jumpFactor;
         } else if (movement.directionY == .down) {
-            velocity.y += speed.y;
+            velocity.y += speed.y * jumpFactor;
         }
     }
 }

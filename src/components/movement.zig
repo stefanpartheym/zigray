@@ -14,4 +14,5 @@ pub const Movement = struct {
     previousDirectionX: MovementDirectionX = .none,
     directionY: MovementDirectionY = .none,
     previousDirectionY: MovementDirectionY = .none,
+    jump: bool = false,
 };
