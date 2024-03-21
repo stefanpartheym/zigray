@@ -1,4 +1,4 @@
 pub const Speed = struct {
-    x: f32,
-    y: f32,
+    movement: f32 = 0,
+    jump: f32 = 0,
 };

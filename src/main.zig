@@ -37,14 +37,23 @@ pub fn main() void {
     defer engine.stop();
 
     while (engine.isRunning()) {
+        // System calls for top-down games:
+        // systems.input.topDown.handleInput(&engine);
+        //
+        // systems.movement.topDown.beginMovement(&engine);
+        // systems.movement.topDown.accelerate(&engine);
+        // systems.physics.handleCollision(&engine, 2);
+        // systems.movement.topDown.endMovement(&engine);
+
+        // System calls for side-scroller games:
         systems.input.sideScroller.handleInput(&engine);
 
-        systems.movement.beginMovement(&engine);
-        systems.movement.accelerate(&engine);
-        systems.movement.jump(&engine);
+        systems.movement.sideScroller.beginMovement(&engine);
+        systems.movement.sideScroller.accelerate(&engine);
+        systems.movement.sideScroller.jump(&engine);
         systems.physics.handleGravitation(&engine);
         systems.physics.handleCollision(&engine, 2);
-        systems.movement.endMovement(&engine);
+        systems.movement.sideScroller.endMovement(&engine);
 
         systems.rendering.beginRendering();
         systems.rendering.render(&engine);
@@ -146,7 +155,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
-    reg.add(player, Speed{ .x = 350, .y = 900 });
+    reg.add(player, Speed{ .movement = 350, .jump = 900 });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
