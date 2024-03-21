@@ -24,7 +24,7 @@ pub fn main() void {
             .physics = .{
                 .gravity = .{
                     .forceX = 0,
-                    .forceY = 3.5,
+                    .forceY = 30,
                 },
             },
         },
@@ -37,10 +37,11 @@ pub fn main() void {
     defer engine.stop();
 
     while (engine.isRunning()) {
-        systems.input.topDown.handleInput(&engine);
+        systems.input.sideScroller.handleInput(&engine);
 
         systems.movement.beginMovement(&engine);
         systems.movement.accelerate(&engine);
+        systems.movement.jump(&engine);
         systems.physics.handleGravitation(&engine);
         systems.physics.handleCollision(&engine, 2);
         systems.movement.endMovement(&engine);
@@ -94,6 +95,8 @@ fn setupEntities(engine: *Engine) void {
     // Box 1 (on ground)
     const box1 = reg.create();
     reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
+    reg.add(box1, Velocity{});
+    reg.add(box1, Gravity{});
     reg.add(box1, Body{ .width = 50, .height = 50 });
     reg.add(box1, Visual{ .color = ray.DARKGRAY });
     reg.add(box1, Collision{});
@@ -129,11 +132,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
-    const engineGravity = engine.state.physics.gravity;
-    reg.add(player, Speed{
-        .x = 5 + engineGravity.forceX,
-        .y = 5 + engineGravity.forceY,
-    });
+    reg.add(player, Speed{ .x = 350, .y = 1000 });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });

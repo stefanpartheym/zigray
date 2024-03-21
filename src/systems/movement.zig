@@ -1,10 +1,27 @@
-const std = @import("std");
 const Engine = @import("../engine/main.zig").Engine;
 const components = @import("../components/main.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
 const Speed = components.Speed;
 const Movement = components.Movement;
+const Collision = components.Collision;
+
+/// Jump system
+/// Handle player jump movement.
+pub fn jump(engine: *Engine) void {
+    var view = engine.registry.view(.{ Velocity, Speed, Movement }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var velocity = view.get(Velocity, entity);
+        const movement = view.getConst(Movement, entity);
+        const speed = view.getConst(Speed, entity);
+        const collision = view.getConst(Collision, entity);
+
+        if (collision.grounded and movement.directionY == .up) {
+            velocity.y += -speed.y * engine.getDeltaTime();
+        }
+    }
+}
 
 /// Acceleration system
 /// Accelerates entities based on their speed and the direction they're moving.
@@ -13,35 +30,29 @@ pub fn accelerate(engine: *Engine) void {
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
-        const speed = view.getConst(Speed, entity);
         const movement = view.getConst(Movement, entity);
+        const speed = view.getConst(Speed, entity);
 
         if (movement.directionX == .left) {
-            velocity.x += -speed.x;
+            velocity.x += -speed.x * engine.getDeltaTime();
         } else if (movement.directionX == .right) {
-            velocity.x += speed.x;
-        }
-
-        const jumpFactor = @as(f32, if (movement.jump) 20.0 else 1.0);
-        if (movement.directionY == .up) {
-            velocity.y += -speed.y * jumpFactor;
-        } else if (movement.directionY == .down) {
-            velocity.y += speed.y * jumpFactor;
+            velocity.x += speed.x * engine.getDeltaTime();
+        } else {
+            velocity.x = 0;
         }
     }
 }
 
 /// Movement system (begin)
-/// Prepares every movable entity by resetting their velocity.
-/// This must happen before all other movement related systems, like acceleration
-/// or collision handling.
+/// Prepares every movable entity by resetting their velocity on the X-axis.
+/// This must happen before all other movement related systems, like
+/// acceleration or collision handling.
 pub fn beginMovement(engine: *Engine) void {
     var view = engine.registry.view(.{ Position, Velocity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
         velocity.x = 0;
-        velocity.y = 0;
     }
 }
 

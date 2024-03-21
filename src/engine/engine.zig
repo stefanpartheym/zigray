@@ -78,6 +78,10 @@ pub const Engine = struct {
         ray.CloseWindow();
     }
 
+    pub fn getDeltaTime(_: *const Engine) f32 {
+        return ray.GetFrameTime();
+    }
+
     pub fn changeStatus(self: *Engine, newStatus: state.EngineStatus) void {
         self.state.status = newStatus;
     }

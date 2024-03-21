@@ -1,4 +1,3 @@
-const std = @import("std");
 const Engine = @import("../engine/engine.zig").Engine;
 const aabb = @import("../physics/aabb.zig");
 const components = @import("../components/main.zig");
@@ -16,13 +15,24 @@ pub fn handleGravitation(engine: *Engine) void {
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
         const gravity = view.getConst(Gravity, entity);
-        velocity.x += if (gravity.forceX) |forceX| forceX else engineGravity.forceX;
-        velocity.y += if (gravity.forceY) |forceY| forceY else engineGravity.forceY;
+        const gravityX = if (gravity.forceX) |forceX| forceX else engineGravity.forceX;
+        const gravityY = if (gravity.forceY) |forceY| forceY else engineGravity.forceY;
+        velocity.x += gravityX * engine.getDeltaTime();
+        velocity.y += gravityY * engine.getDeltaTime();
     }
 }
 
 /// Collision detection and response system
 pub fn handleCollision(engine: *Engine, iterations: usize) void {
+    var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var entityCollision = view.get(Collision, entity);
+        // Reset collision flags.
+        entityCollision.collided = false;
+        entityCollision.grounded = false;
+    }
+
     for (0..iterations) |_| {
         handleCollisionOnce(engine);
     }
@@ -38,8 +48,9 @@ pub fn handleCollisionOnce(engine: *Engine) void {
 
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
-        const entityPosition = view.get(Position, entity);
         var entityVelocity = view.get(Velocity, entity);
+        var entityCollision = view.get(Collision, entity);
+        const entityPosition = view.getConst(Position, entity);
         const entityBody = view.getConst(Body, entity);
 
         const entityAabb = aabb.createAabb(
@@ -83,6 +94,8 @@ pub fn handleCollisionOnce(engine: *Engine) void {
                 // Collision time < 1 indicates that there is a collision.
                 // Collision time >= 1 indicates that there is no collision.
                 if (sweepResult.time < 1) {
+                    entityCollision.collided = true;
+                    entityCollision.grounded = sweepResult.normalY != 0;
                     // Calculate the corrected velocity based on the collision
                     // time.
                     const correctedVelocity: Velocity = .{

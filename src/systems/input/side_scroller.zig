@@ -27,7 +27,6 @@ pub fn handleInput(engine: *Engine) void {
         movement.previousDirectionX = movement.directionX;
         movement.directionX = directionX;
         movement.previousDirectionY = movement.directionY;
-        movement.jump = jump;
         movement.directionY = if (jump) .up else .none;
     }
 }
