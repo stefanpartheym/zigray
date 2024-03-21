@@ -24,7 +24,7 @@ pub fn main() void {
             .physics = .{
                 .gravity = .{
                     .forceX = 0,
-                    .forceY = 30,
+                    .forceY = 25,
                 },
             },
         },
@@ -92,6 +92,20 @@ fn setupEntities(engine: *Engine) void {
     reg.add(wallRight, Visual{ .color = ray.BROWN });
     reg.add(wallRight, Collision{});
 
+    // Platform 1
+    const platform1 = reg.create();
+    reg.add(platform1, Position{ .x = 150, .y = screenHeight / 2 - 25 });
+    reg.add(platform1, Body{ .width = 300, .height = 50 });
+    reg.add(platform1, Visual{ .color = ray.DARKGRAY });
+    reg.add(platform1, Collision{});
+
+    // Platform 2
+    const platform2 = reg.create();
+    reg.add(platform2, Position{ .x = screenWidth - 150, .y = screenHeight / 3 - 25 });
+    reg.add(platform2, Body{ .width = 300, .height = 50 });
+    reg.add(platform2, Visual{ .color = ray.DARKGRAY });
+    reg.add(platform2, Collision{});
+
     // Box 1 (on ground)
     const box1 = reg.create();
     reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
@@ -103,7 +117,7 @@ fn setupEntities(engine: *Engine) void {
 
     // Box 2 (in the air)
     const box2 = reg.create();
-    reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
+    reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 + 75 });
     reg.add(box2, Velocity{});
     reg.add(box2, Gravity{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
@@ -112,7 +126,7 @@ fn setupEntities(engine: *Engine) void {
 
     // Box 3 (in the air)
     const box3 = reg.create();
-    reg.add(box3, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 100 });
+    reg.add(box3, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
     reg.add(box3, Velocity{});
     reg.add(box3, Gravity{});
     reg.add(box3, Body{ .width = 50, .height = 50 });
@@ -121,7 +135,7 @@ fn setupEntities(engine: *Engine) void {
 
     // Box 4 (in the air)
     const box4 = reg.create();
-    reg.add(box4, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 200 });
+    reg.add(box4, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 75 });
     reg.add(box4, Velocity{});
     reg.add(box4, Gravity{});
     reg.add(box4, Body{ .width = 50, .height = 50 });
@@ -132,7 +146,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(player, Player{});
     reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
-    reg.add(player, Speed{ .x = 350, .y = 1000 });
+    reg.add(player, Speed{ .x = 350, .y = 900 });
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
