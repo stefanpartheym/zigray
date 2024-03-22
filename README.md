@@ -4,7 +4,11 @@ Test game engine using zig and raylib.
 
 ## Roadmap
 
-- [ ] Jump movement
+- [x] Jump movement
+- [ ] Side scrolling
+- [ ] Shooting/projectiles
+- [ ] Sprites/textures
+- [ ] Enemies/AI
 
 ## Bugs
 
