@@ -1,0 +1,1 @@
+pub const Destroy = struct {};

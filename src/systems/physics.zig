@@ -10,7 +10,8 @@ const Collision = components.Collision;
 /// Gravitation system
 pub fn handleGravitation(engine: *Engine) void {
     const engineGravity = engine.state.physics.gravity;
-    var view = engine.registry.view(.{ Velocity, Gravity }, .{});
+    var reg = &(engine.registry);
+    var view = reg.view(.{ Velocity, Gravity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
@@ -24,7 +25,8 @@ pub fn handleGravitation(engine: *Engine) void {
 
 /// Collision detection and response system
 pub fn handleCollision(engine: *Engine, iterations: usize) void {
-    var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
+    var reg = &(engine.registry);
+    var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var entityCollision = view.get(Collision, entity);
@@ -43,8 +45,9 @@ pub fn handleCollision(engine: *Engine, iterations: usize) void {
 /// recommended to invoke this function multiple times per frame.
 /// Use `handleCollision` and pass the number of iterations for this purpose.
 pub fn handleCollisionOnce(engine: *Engine) void {
-    var view = engine.registry.view(.{ Position, Velocity, Body, Collision }, .{});
-    var viewColliders = engine.registry.view(.{ Position, Body, Collision }, .{});
+    var reg = &(engine.registry);
+    var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
+    var viewColliders = reg.view(.{ Position, Body, Collision }, .{});
 
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -96,18 +99,33 @@ pub fn handleCollisionOnce(engine: *Engine) void {
                 if (sweepResult.time < 1) {
                     entityCollision.collided = true;
                     entityCollision.grounded = sweepResult.normalY != 0;
+
+                    // Call onCollision callbacks on entity and collider, if
+                    // available.
+                    if (entityCollision.onCollision) |onCollision| {
+                        onCollision(reg, entity, collider);
+                    }
+                    if (reg.has(Collision, collider)) {
+                        const colliderCollision = reg.getConst(Collision, collider);
+                        if (colliderCollision.onCollision) |onCollision| {
+                            onCollision(reg, collider, entity);
+                        }
+                    }
+
                     // Calculate the corrected velocity based on the collision
                     // time.
                     const correctedVelocity: Velocity = .{
                         .x = entityVelocity.x * sweepResult.time,
                         .y = entityVelocity.y * sweepResult.time,
                     };
+
                     // Calculate the remaining velocity in response to the
                     // collision.
                     const responseVelocity = aabb.responseSlide(
                         .{ .x = entityVelocity.x, .y = entityVelocity.y },
                         sweepResult,
                     );
+
                     // Update the entity's velocity accordingly.
                     entityVelocity.x = correctedVelocity.x + responseVelocity.x;
                     entityVelocity.y = correctedVelocity.y + responseVelocity.y;

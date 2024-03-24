@@ -1,7 +1,6 @@
 const std = @import("std");
-const ray = @import("raylib");
-
 const Engine = @import("engine/main.zig").Engine;
+const components = @import("components/main.zig");
 const systems = @import("systems/main.zig");
 
 pub fn main() void {
@@ -60,11 +59,14 @@ pub fn main() void {
         systems.rendering.endRendering();
 
         systems.input.common.handleInput(&engine);
+
+        systems.cleanup.destroyTaggedEntities(&engine);
     }
 }
 
 fn setupEntities(engine: *Engine) void {
-    const components = @import("components/main.zig");
+    const ray = @import("raylib");
+    const ecs = @import("ecs");
     const Position = components.Position;
     const Velocity = components.Velocity;
     const Speed = components.Speed;
@@ -115,6 +117,15 @@ fn setupEntities(engine: *Engine) void {
     reg.add(platform2, Visual{ .color = ray.DARKGRAY });
     reg.add(platform2, Collision{});
 
+    const OnCollisionFn = struct {
+        pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
+            // Destroy entity only, if colliding with a projectile.
+            if (r.has(components.Projectile, colliderEntity) and !r.has(components.Destroy, e)) {
+                r.add(e, components.Destroy{});
+            }
+        }
+    };
+
     // Box 1 (on ground)
     const box1 = reg.create();
     reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
@@ -122,7 +133,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(box1, Gravity{});
     reg.add(box1, Body{ .width = 50, .height = 50 });
     reg.add(box1, Visual{ .color = ray.DARKGRAY });
-    reg.add(box1, Collision{});
+    reg.add(box1, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 2 (in the air)
     const box2 = reg.create();
@@ -131,7 +142,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(box2, Gravity{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
     reg.add(box2, Visual{ .color = ray.GRAY });
-    reg.add(box2, Collision{});
+    reg.add(box2, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 3 (in the air)
     const box3 = reg.create();
@@ -140,7 +151,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(box3, Gravity{});
     reg.add(box3, Body{ .width = 50, .height = 50 });
     reg.add(box3, Visual{ .color = ray.LIGHTGRAY });
-    reg.add(box3, Collision{});
+    reg.add(box3, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 4 (in the air)
     const box4 = reg.create();
@@ -149,7 +160,7 @@ fn setupEntities(engine: *Engine) void {
     reg.add(box4, Gravity{});
     reg.add(box4, Body{ .width = 50, .height = 50 });
     reg.add(box4, Visual{ .color = ray.WHITE });
-    reg.add(box4, Collision{});
+    reg.add(box4, Collision{ .onCollision = OnCollisionFn.f });
 
     const player = reg.create();
     reg.add(player, Player{});

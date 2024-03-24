@@ -1,1 +1,1 @@
-pub const Player = struct { };
+pub const Player = struct {};

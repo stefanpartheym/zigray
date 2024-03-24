@@ -9,7 +9,7 @@ const Collision = components.Collision;
 /// Jump system
 /// Handle player jump movement.
 pub fn jump(engine: *Engine) void {
-    var view = engine.registry.view(.{ Velocity, Speed, Movement }, .{});
+    var view = engine.registry.view(.{ Velocity, Speed, Movement, Collision }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);

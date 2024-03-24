@@ -6,7 +6,7 @@ Test game engine using zig and raylib.
 
 - [x] Jump movement
 - [ ] Side scrolling
-- [ ] Shooting/projectiles
+- [x] Shooting/projectiles
 - [ ] Sprites/textures
 - [ ] Enemies/AI
 
