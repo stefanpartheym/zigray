@@ -18,7 +18,7 @@ fn getDirectionX() MovementDirectionX {
 }
 
 pub fn handleInput(engine: *Engine) void {
-    const reg = &(engine.registry);
+    const reg = engine.getRegistry();
 
     const directionX: MovementDirectionX = getDirectionX();
     const jump = ray.IsKeyPressed(ray.KEY_SPACE);
@@ -77,7 +77,7 @@ pub fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginS
         .y = originState.position.y,
     };
 
-    var reg = &(engine.registry);
+    var reg = engine.getRegistry();
     const projectileEntity = reg.create();
     reg.add(projectileEntity, body);
     reg.add(projectileEntity, movement);

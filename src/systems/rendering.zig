@@ -21,7 +21,8 @@ pub fn endRendering() void {
 }
 
 pub fn render(engine: *Engine) void {
-    var view = engine.registry.view(.{ Position, Body, Visual }, .{});
+    var reg = engine.getRegistry();
+    var view = reg.view(.{ Position, Body, Visual }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         const position = view.getConst(Position, entity);
@@ -35,22 +36,24 @@ pub fn render(engine: *Engine) void {
             visual.color,
         );
 
-        if (engine.isDebugModeEnabled() and engine.registry.has(Collision, entity)) {
+        if (engine.isDebugModeEnabled() and reg.has(Collision, entity)) {
             renderBoundingBox(engine, entity);
         }
     }
 }
 
 pub fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
+    var reg = engine.getRegistry();
+
     var velocityX: f32 = 0;
     var velocityY: f32 = 0;
-    if (engine.registry.has(Velocity, entity)) {
-        const vel = engine.registry.getConst(Velocity, entity);
+    if (reg.has(Velocity, entity)) {
+        const vel = reg.getConst(Velocity, entity);
         velocityX = vel.x;
         velocityY = vel.y;
     }
-    const position = engine.registry.getConst(Position, entity);
-    const body = engine.registry.getConst(Body, entity);
+    const position = reg.getConst(Position, entity);
+    const body = reg.getConst(Body, entity);
     const entityAabb = aabb.createAabb(
         position.getAbsoluteX(body.width),
         position.getAbsoluteY(body.height),

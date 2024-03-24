@@ -73,9 +73,12 @@ pub const Engine = struct {
         self.changeStatus(.RUNNING);
     }
 
-    pub fn stop(self: *const Engine) void {
-        _ = self;
+    pub fn stop(_: *const Engine) void {
         ray.CloseWindow();
+    }
+
+    pub fn getRegistry(self: *Engine) *ecs.Registry {
+        return &self.registry;
     }
 
     pub fn getDeltaTime(_: *const Engine) f32 {

@@ -9,7 +9,7 @@ const Collision = components.Collision;
 /// Acceleration system
 /// Accelerates entities based on their speed and the direction they're moving.
 pub fn accelerate(engine: *Engine) void {
-    var view = engine.registry.view(.{ Velocity, Speed, Movement }, .{});
+    var view = engine.getRegistry().view(.{ Velocity, Speed, Movement }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
@@ -36,7 +36,7 @@ pub fn accelerate(engine: *Engine) void {
 /// This must happen before all other movement related systems, like
 /// acceleration or collision handling.
 pub fn beginMovement(engine: *Engine) void {
-    var view = engine.registry.view(.{ Position, Velocity }, .{});
+    var view = engine.getRegistry().view(.{ Position, Velocity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
@@ -50,7 +50,7 @@ pub fn beginMovement(engine: *Engine) void {
 /// This must happen after all other movement related systems, like acceleration
 /// or collision handling.
 pub fn endMovement(engine: *Engine) void {
-    var view = engine.registry.view(.{ Position, Velocity }, .{});
+    var view = engine.getRegistry().view(.{ Position, Velocity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var position = view.get(Position, entity);

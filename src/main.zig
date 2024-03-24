@@ -77,7 +77,7 @@ fn setupEntities(engine: *Engine) void {
     const Player = components.Player;
     const Movement = components.Movement;
 
-    var reg = &(engine.registry);
+    var reg = engine.getRegistry();
 
     const screenWidth = engine.state.display.width;
     const screenHeight = engine.state.display.height;

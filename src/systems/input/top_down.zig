@@ -30,7 +30,7 @@ pub fn handleInput(engine: *Engine) void {
     const directionX: MovementDirectionX = getDirectionX();
     const directionY: MovementDirectionY = getDirectionY();
 
-    var view = engine.registry.view(.{ Movement, Player }, .{});
+    var view = engine.getRegistry().view(.{ Movement, Player }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var movement = view.get(Movement, entity);
