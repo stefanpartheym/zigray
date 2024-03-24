@@ -15,4 +15,34 @@ pub fn handleInput(engine: *Engine) void {
     if (ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q)) {
         engine.changeStatus(.STOPPED);
     }
+
+    if (ray.IsKeyPressed(ray.KEY_F2)) {
+        spawnTestBox(engine);
+    }
+}
+
+//------------------------------------------------------------------------------
+
+fn spawnTestBox(engine: *Engine) void {
+    const ecs = @import("ecs");
+    const components = @import("../../components/main.zig");
+    var reg = engine.getRegistry();
+    const displayWidth = engine.state.display.width;
+
+    const OnCollisionFn = struct {
+        pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
+            // Destroy entity only, if colliding with a projectile.
+            if (r.has(components.Projectile, colliderEntity) and !r.has(components.Destroy, e)) {
+                r.add(e, components.Destroy{});
+            }
+        }
+    };
+
+    const entity = reg.create();
+    reg.add(entity, components.Position{ .x = displayWidth / 2, .y = 25 });
+    reg.add(entity, components.Velocity{});
+    reg.add(entity, components.Gravity{});
+    reg.add(entity, components.Body{ .width = 50, .height = 50 });
+    reg.add(entity, components.Visual{ .color = ray.GRAY });
+    reg.add(entity, components.Collision{ .onCollision = OnCollisionFn.f });
 }
