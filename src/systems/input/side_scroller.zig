@@ -68,9 +68,9 @@ pub fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginS
     const movement: components.Movement = .{
         .directionX = originState.body.facingDirectionX,
     };
-    var positionOffset: f32 = originState.body.width / 2;
+    var positionOffset: f32 = (originState.body.width / 2) - (body.width / 2);
     if (originState.body.facingDirectionX == .left) {
-        positionOffset = body.width * -1;
+        positionOffset *= -1;
     }
     const position: components.Position = .{
         .x = originState.position.x + positionOffset,
