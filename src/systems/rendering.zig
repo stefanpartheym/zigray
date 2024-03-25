@@ -37,9 +37,22 @@ pub fn render(engine: *Engine) void {
         );
 
         if (engine.isDebugModeEnabled() and reg.has(Collision, entity)) {
+            renderCenterPoint(engine, entity);
             renderBoundingBox(engine, entity);
         }
     }
+}
+
+pub fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
+    var reg = engine.getRegistry();
+    const position = reg.getConst(Position, entity);
+
+    ray.DrawCircle(
+        @intFromFloat(position.x),
+        @intFromFloat(position.y),
+        2,
+        ray.RED,
+    );
 }
 
 pub fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
