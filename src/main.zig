@@ -158,7 +158,7 @@ pub fn main() void {
 
         systems.rendering.beginRendering();
         systems.rendering.render(&engine);
-        systems.rendering.endRendering();
+        systems.rendering.endRendering(&engine);
 
         systems.input.common.handleInput(&engine);
 

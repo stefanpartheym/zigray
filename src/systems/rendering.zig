@@ -14,8 +14,10 @@ pub fn beginRendering() void {
     rl.clearBackground(rl.Color.black);
 }
 
-pub fn endRendering() void {
-    rl.drawFPS(10, 10);
+pub fn endRendering(engine: *Engine) void {
+    if (engine.isDebugModeEnabled()) {
+        rl.drawFPS(10, 10);
+    }
     rl.endDrawing();
 }
 
