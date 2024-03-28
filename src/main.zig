@@ -1,7 +1,9 @@
+const ray = @import("raylib");
 const std = @import("std");
 const Engine = @import("engine/main.zig").Engine;
 const components = @import("components/main.zig");
 const systems = @import("systems/main.zig");
+const anim = @import("animation/main.zig");
 
 pub fn main() void {
     const name = "zigray-test";
@@ -30,10 +32,108 @@ pub fn main() void {
     );
     defer engine.deinit();
 
-    setupEntities(&engine);
-
     engine.start();
     defer engine.stop();
+
+    const playerSpriteSheet = ray.LoadTexture("assets/character.atlas.png");
+    defer ray.UnloadTexture(playerSpriteSheet);
+    const playerAnimations: anim.AnimationDefinitions = &[_]anim.AnimationDefinition{
+        // Animation 0: Standing
+        &[_]anim.AnimationFrame{
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 0,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+        },
+        // Animation 1: Moving
+        &[_]anim.AnimationFrame{
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 24,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 48,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 72,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 96,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 120,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 144,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+            .{
+                .sprite = .{
+                    .texture = &playerSpriteSheet,
+                    .source = .{
+                        .x = 168,
+                        .y = 24,
+                        .width = 24,
+                        .height = 24,
+                    },
+                },
+            },
+        },
+    };
+    setupEntities(&engine, playerAnimations);
 
     while (engine.isRunning()) {
         // System calls for top-down games:
@@ -54,6 +154,8 @@ pub fn main() void {
         systems.physics.handleCollision(&engine, 2);
         systems.movement.sideScroller.endMovement(&engine);
 
+        systems.animation.animate(&engine);
+
         systems.rendering.beginRendering();
         systems.rendering.render(&engine);
         systems.rendering.endRendering();
@@ -64,8 +166,7 @@ pub fn main() void {
     }
 }
 
-fn setupEntities(engine: *Engine) void {
-    const ray = @import("raylib");
+fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) void {
     const ecs = @import("ecs");
     const Position = components.Position;
     const Velocity = components.Velocity;
@@ -76,6 +177,7 @@ fn setupEntities(engine: *Engine) void {
     const Collision = components.Collision;
     const Player = components.Player;
     const Movement = components.Movement;
+    const Animation = components.Animation;
 
     var reg = engine.getRegistry();
 
@@ -172,4 +274,9 @@ fn setupEntities(engine: *Engine) void {
     reg.add(player, Body{ .width = 50, .height = 50 });
     reg.add(player, Visual{ .color = ray.GREEN });
     reg.add(player, Collision{});
+    reg.add(player, Animation{
+        .definition = 0,
+        .frame = 0,
+        .definitions = playerAnimations,
+    });
 }

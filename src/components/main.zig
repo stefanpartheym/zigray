@@ -11,6 +11,7 @@ pub const Visual = @import("visual.zig").Visual;
 pub const Collision = @import("collision.zig").Collision;
 pub const Player = @import("player.zig").Player;
 pub const Projectile = @import("projectile.zig").Projectile;
+pub const Animation = @import("animation.zig").Animation;
 
 // Tags
 pub const Destroy = @import("destroy.zig").Destroy;

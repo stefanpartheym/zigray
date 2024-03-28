@@ -1,4 +1,3 @@
-const std = @import("std");
 const ecs = @import("ecs");
 const ray = @import("raylib");
 const Engine = @import("../engine/main.zig").Engine;
@@ -28,13 +27,10 @@ pub fn render(engine: *Engine) void {
         const position = view.getConst(Position, entity);
         const body = view.getConst(Body, entity);
         const visual = view.getConst(Visual, entity);
-        ray.DrawRectangle(
-            @intFromFloat(position.getAbsoluteX(body.width)),
-            @intFromFloat(position.getAbsoluteY(body.height)),
-            @intFromFloat(body.width),
-            @intFromFloat(body.height),
-            visual.color,
-        );
+        switch (visual) {
+            .color => renderColor(position, body, visual),
+            .sprite => renderSprite(position, body, visual),
+        }
 
         if (engine.isDebugModeEnabled() and reg.has(Collision, entity)) {
             renderCenterPoint(engine, entity);
@@ -43,7 +39,41 @@ pub fn render(engine: *Engine) void {
     }
 }
 
-pub fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
+fn renderColor(position: Position, body: Body, visual: Visual) void {
+    ray.DrawRectangle(
+        @intFromFloat(position.getAbsoluteX(body.width)),
+        @intFromFloat(position.getAbsoluteY(body.height)),
+        @intFromFloat(body.width),
+        @intFromFloat(body.height),
+        visual.color,
+    );
+}
+
+fn renderSprite(position: Position, body: Body, visual: Visual) void {
+    ray.DrawTexturePro(
+        visual.sprite.texture.*,
+        .{
+            .x = @floatFromInt(visual.sprite.source.x),
+            .y = @floatFromInt(visual.sprite.source.y),
+            .width = @floatFromInt(visual.sprite.source.width),
+            .height = @floatFromInt(visual.sprite.source.height),
+        },
+        .{
+            .x = position.getAbsoluteX(body.width),
+            .y = position.getAbsoluteY(body.height),
+            .width = body.width,
+            .height = body.height,
+        },
+        .{
+            .x = 0,
+            .y = 0,
+        },
+        0,
+        ray.WHITE,
+    );
+}
+
+fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
     var reg = engine.getRegistry();
     const position = reg.getConst(Position, entity);
 
@@ -55,7 +85,7 @@ pub fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
     );
 }
 
-pub fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
+fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
     var reg = engine.getRegistry();
 
     var velocityX: f32 = 0;

@@ -28,9 +28,7 @@ pub fn handleInput(engine: *Engine) void {
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
         var movement = view.get(Movement, entity);
-        movement.previousDirectionX = movement.directionX;
         movement.directionX = directionX;
-        movement.previousDirectionY = movement.directionY;
         movement.directionY = if (jump) .up else .none;
 
         if (directionX != .none) {
@@ -38,6 +36,36 @@ pub fn handleInput(engine: *Engine) void {
             if (entityBody) |body| {
                 body.facingDirectionX = directionX;
             }
+        }
+
+        if (movement.directionY != movement.previousDirectionY) {
+            movement.previousDirectionY = movement.directionY;
+        }
+        if (movement.directionX != movement.previousDirectionX) {
+            const entityAnimation = reg.tryGet(components.Animation, entity);
+            if (entityAnimation) |animation| {
+                switch (directionX) {
+                    .left => {
+                        animation.definition = 1;
+                        animation.frame = 0;
+                        animation.flipFrame = true;
+                    },
+                    .right => {
+                        animation.definition = 1;
+                        animation.frame = 0;
+                        animation.flipFrame = false;
+                    },
+                    .none => {
+                        animation.definition = 0;
+                        animation.frame = 0;
+                        switch (movement.previousDirectionX) {
+                            .left => animation.flipFrame = true,
+                            .right, .none => animation.flipFrame = false,
+                        }
+                    },
+                }
+            }
+            movement.previousDirectionX = movement.directionX;
         }
 
         if (shoot and

@@ -1,3 +1,12 @@
-const Color = @import("raylib").Color;
+const ray = @import("raylib");
+const Sprite = @import("../graphics/main.zig").Sprite;
 
-pub const Visual = struct { color: Color };
+pub const VisualType = enum {
+    color,
+    sprite,
+};
+
+pub const Visual = union(VisualType) {
+    color: ray.Color,
+    sprite: Sprite,
+};

@@ -1,3 +1,6 @@
 # zig related
 /zig-cache/
 /zig-out/
+
+# other
+/assets/_archive/
