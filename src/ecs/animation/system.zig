@@ -1,7 +1,7 @@
 const ecs = @import("ecs");
 const ray = @import("raylib");
-const Engine = @import("../engine/main.zig").Engine;
-const components = @import("../components/main.zig");
+const Engine = @import("../../engine/main.zig").Engine;
+const components = @import("../components.zig");
 const Animation = components.Animation;
 // const Body = components.Body;
 const Visual = components.Visual;

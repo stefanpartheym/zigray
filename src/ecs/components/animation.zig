@@ -1,4 +1,4 @@
-const anim = @import("../animation/main.zig");
+const anim = @import("../../animation/main.zig");
 
 pub const Animation = struct {
     definition: u8,

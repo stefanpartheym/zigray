@@ -1,7 +1,7 @@
 const rl = @import("raylib");
-const Sprite = @import("../graphics/main.zig").Sprite;
+const Sprite = @import("../../graphics/main.zig").Sprite;
 
-pub const VisualType = enum {
+const VisualType = enum {
     color,
     sprite,
 };

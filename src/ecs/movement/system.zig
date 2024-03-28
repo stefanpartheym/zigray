@@ -1,10 +1,27 @@
 const Engine = @import("../../engine/main.zig").Engine;
-const components = @import("../../components/main.zig");
+const components = @import("../components.zig");
 const Position = components.Position;
 const Velocity = components.Velocity;
 const Speed = components.Speed;
 const Movement = components.Movement;
 const Collision = components.Collision;
+
+/// Jump system
+/// Handle player jump movement.
+pub fn jump(engine: *Engine) void {
+    var view = engine.getRegistry().view(.{ Velocity, Speed, Movement, Collision }, .{});
+    var iter = view.entityIterator();
+    while (iter.next()) |entity| {
+        var velocity = view.get(Velocity, entity);
+        const movement = view.getConst(Movement, entity);
+        const speed = view.getConst(Speed, entity);
+        const collision = view.getConst(Collision, entity);
+
+        if (collision.grounded and movement.directionY == .up) {
+            velocity.y += -speed.jump * engine.getDeltaTime();
+        }
+    }
+}
 
 /// Acceleration system
 /// Accelerates entities based on their speed and the direction they're moving.
@@ -17,16 +34,12 @@ pub fn accelerate(engine: *Engine) void {
         const speed = view.getConst(Speed, entity);
         const scaledSpeed = speed.movement * engine.getDeltaTime();
 
-        if (movement.directionY == .up) {
-            velocity.y += -scaledSpeed;
-        } else if (movement.directionY == .down) {
-            velocity.y += scaledSpeed;
-        }
-
         if (movement.directionX == .left) {
             velocity.x += -scaledSpeed;
         } else if (movement.directionX == .right) {
             velocity.x += scaledSpeed;
+        } else {
+            velocity.x = 0;
         }
     }
 }
@@ -41,7 +54,6 @@ pub fn beginMovement(engine: *Engine) void {
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
         velocity.x = 0;
-        velocity.y = 0;
     }
 }
 

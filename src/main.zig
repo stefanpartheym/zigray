@@ -1,8 +1,8 @@
-const rl = @import("raylib");
 const std = @import("std");
+const rl = @import("raylib");
 const Engine = @import("engine/main.zig").Engine;
-const components = @import("components/main.zig");
-const systems = @import("systems/main.zig");
+const components = @import("ecs/components.zig");
+const systems = @import("ecs/systems.zig");
 const anim = @import("animation/main.zig");
 
 pub fn main() void {
@@ -136,31 +136,22 @@ pub fn main() void {
     setupEntities(&engine, playerAnimations);
 
     while (engine.isRunning()) {
-        // System calls for top-down games:
-        // systems.input.topDown.handleInput(&engine);
-        //
-        // systems.movement.topDown.beginMovement(&engine);
-        // systems.movement.topDown.accelerate(&engine);
-        // systems.physics.handleCollision(&engine, 2);
-        // systems.movement.topDown.endMovement(&engine);
+        systems.input.handleMovementInput(&engine);
 
-        // System calls for side-scroller games:
-        systems.input.sideScroller.handleInput(&engine);
-
-        systems.movement.sideScroller.beginMovement(&engine);
-        systems.movement.sideScroller.accelerate(&engine);
-        systems.movement.sideScroller.jump(&engine);
+        systems.movement.beginMovement(&engine);
+        systems.movement.accelerate(&engine);
+        systems.movement.jump(&engine);
         systems.physics.handleGravitation(&engine);
         systems.physics.handleCollision(&engine, 2);
-        systems.movement.sideScroller.endMovement(&engine);
+        systems.movement.endMovement(&engine);
 
         systems.animation.animate(&engine);
 
-        systems.rendering.beginRendering();
-        systems.rendering.render(&engine);
-        systems.rendering.endRendering(&engine);
+        systems.graphics.beginRendering();
+        systems.graphics.render(&engine);
+        systems.graphics.endRendering(&engine);
 
-        systems.input.common.handleInput(&engine);
+        systems.input.handleInput(&engine);
 
         systems.cleanup.destroyTaggedEntities(&engine);
     }

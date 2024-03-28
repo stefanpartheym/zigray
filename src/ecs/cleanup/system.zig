@@ -1,5 +1,5 @@
-const Engine = @import("../engine/main.zig").Engine;
-const components = @import("../components/main.zig");
+const Engine = @import("../../engine/main.zig").Engine;
+const components = @import("../components.zig");
 
 /// Destroys all entities that are tagged with a `Destroy ` component.
 /// This is required for entities that are destroyed during collision resolution,

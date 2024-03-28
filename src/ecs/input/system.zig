@@ -1,23 +1,34 @@
 const ecs = @import("ecs");
 const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
-const components = @import("../../components/main.zig");
+const components = @import("../components.zig");
 const Movement = components.Movement;
 const Player = components.Player;
 const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
 
-fn getDirectionX() MovementDirectionX {
-    if (rl.isKeyDown(rl.KeyboardKey.key_right) or rl.isKeyDown(rl.KeyboardKey.key_l)) {
-        return .right;
-    } else if (rl.isKeyDown(rl.KeyboardKey.key_left) or rl.isKeyDown(rl.KeyboardKey.key_h)) {
-        return .left;
-    } else {
-        return .none;
+/// Common input handler system.
+/// Handles events like closing the window, or toggling debug mode.
+pub fn handleInput(engine: *Engine) void {
+    // Toggle debug mode, if relevant.
+    if (rl.isKeyPressed(rl.KeyboardKey.key_f1)) {
+        engine.toggleDebugMode();
+    }
+
+    // Update the engine's status on certain inputs.
+    // For instance, if [Q] is pressed or if the user closes the window, the engine
+    // will be stopped.
+    if (rl.windowShouldClose() or rl.isKeyPressed(rl.KeyboardKey.key_q)) {
+        engine.changeStatus(.STOPPED);
+    }
+
+    if (rl.isKeyPressed(rl.KeyboardKey.key_f2)) {
+        spawnTestBox(engine);
     }
 }
 
-pub fn handleInput(engine: *Engine) void {
+/// Handles movement related input.
+pub fn handleMovementInput(engine: *Engine) void {
     const reg = engine.getRegistry();
 
     const directionX: MovementDirectionX = getDirectionX();
@@ -83,6 +94,38 @@ pub fn handleInput(engine: *Engine) void {
 }
 
 //------------------------------------------------------------------------------
+
+fn spawnTestBox(engine: *Engine) void {
+    var reg = engine.getRegistry();
+    const displayWidth = engine.state.display.width;
+
+    const OnCollisionFn = struct {
+        pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
+            // Destroy entity only, if colliding with a projectile.
+            if (r.has(components.Projectile, colliderEntity) and !r.has(components.Destroy, e)) {
+                r.add(e, components.Destroy{});
+            }
+        }
+    };
+
+    const entity = reg.create();
+    reg.add(entity, components.Position{ .x = displayWidth / 2, .y = 25 });
+    reg.add(entity, components.Velocity{});
+    reg.add(entity, components.Gravity{});
+    reg.add(entity, components.Body{ .width = 50, .height = 50 });
+    reg.add(entity, components.Visual{ .color = rl.Color.gray });
+    reg.add(entity, components.Collision{ .onCollision = OnCollisionFn.f });
+}
+
+fn getDirectionX() MovementDirectionX {
+    if (rl.isKeyDown(rl.KeyboardKey.key_right) or rl.isKeyDown(rl.KeyboardKey.key_l)) {
+        return .right;
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_left) or rl.isKeyDown(rl.KeyboardKey.key_h)) {
+        return .left;
+    } else {
+        return .none;
+    }
+}
 
 /// Relevant state of the shooting entity.
 const OriginState = struct {

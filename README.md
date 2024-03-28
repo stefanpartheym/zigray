@@ -13,7 +13,7 @@ Test game engine using zig and raylib.
 
 ## TODO
 
-- [ ] Remove all non 2d-platformer code
+- [x] Remove all non 2d-platformer code
 - [x] Use [zig-raylib](https://github.com/Not-Nik/raylib-zig)
 
 ## Bugs
