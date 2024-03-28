@@ -1,6 +1,6 @@
 const std = @import("std");
 const ecs = @import("ecs");
-const ray = @import("raylib");
+const rl = @import("raylib");
 const state = @import("state.zig");
 
 pub const EngineInitOptions = struct {
@@ -60,11 +60,11 @@ pub const Engine = struct {
     pub fn start(self: *Engine) void {
         const display = self.state.display;
         if (display.useHighDpi) {
-            ray.SetConfigFlags(ray.FLAG_WINDOW_HIGHDPI);
+            rl.setConfigFlags(rl.ConfigFlags.flag_window_highdpi);
         }
-        ray.SetTraceLogLevel(ray.LOG_WARNING);
-        ray.SetTargetFPS(display.targetFps);
-        ray.InitWindow(
+        rl.setTraceLogLevel(rl.TraceLogLevel.log_warning);
+        rl.setTargetFPS(display.targetFps);
+        rl.initWindow(
             @as(i32, @intFromFloat(display.width)),
             @as(i32, @intFromFloat(display.height)),
             display.title,
@@ -74,7 +74,7 @@ pub const Engine = struct {
     }
 
     pub fn stop(_: *const Engine) void {
-        ray.CloseWindow();
+        rl.closeWindow();
     }
 
     pub fn getRegistry(self: *Engine) *ecs.Registry {
@@ -82,7 +82,7 @@ pub const Engine = struct {
     }
 
     pub fn getDeltaTime(_: *const Engine) f32 {
-        return ray.GetFrameTime();
+        return rl.getFrameTime();
     }
 
     pub fn changeStatus(self: *Engine, newStatus: state.EngineStatus) void {

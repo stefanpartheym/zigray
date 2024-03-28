@@ -1,13 +1,15 @@
 .{
     .name = "zigray",
     .version = "0.0.1",
-    .paths = .{
-        "."
-    },
+    .paths = .{"."},
     .dependencies = .{
         .@"zig-ecs" = .{
             .url = "https://github.com/prime31/zig-ecs/archive/2074d6828aec9815a46bc04bf464fa343938d1b9.tar.gz",
-            .hash = "1220d37b0d55367844ca39af500afe4c1d679ba04db68bcde9f54d3a71a5a6e2e678"
+            .hash = "1220d37b0d55367844ca39af500afe4c1d679ba04db68bcde9f54d3a71a5a6e2e678",
+        },
+        .@"raylib-zig" = .{
+            .url = "https://github.com/stefanpartheym/raylib-zig/archive/0c94e9f48626ad3cae3f1bd2dea218d334a1839f.tar.gz",
+            .hash = "12207d73b118b050394da32101996d615e2385380b99843c942efcd8e64222dc3e23",
         },
     },
 }

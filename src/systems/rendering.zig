@@ -1,5 +1,5 @@
 const ecs = @import("ecs");
-const ray = @import("raylib");
+const rl = @import("raylib");
 const Engine = @import("../engine/main.zig").Engine;
 const components = @import("../components/main.zig");
 const aabb = @import("../physics/aabb.zig");
@@ -10,13 +10,13 @@ const Collision = components.Collision;
 const Velocity = components.Velocity;
 
 pub fn beginRendering() void {
-    ray.BeginDrawing();
-    ray.ClearBackground(ray.BLACK);
+    rl.beginDrawing();
+    rl.clearBackground(rl.Color.black);
 }
 
 pub fn endRendering() void {
-    ray.DrawFPS(10, 10);
-    ray.EndDrawing();
+    rl.drawFPS(10, 10);
+    rl.endDrawing();
 }
 
 pub fn render(engine: *Engine) void {
@@ -40,7 +40,7 @@ pub fn render(engine: *Engine) void {
 }
 
 fn renderColor(position: Position, body: Body, visual: Visual) void {
-    ray.DrawRectangle(
+    rl.drawRectangle(
         @intFromFloat(position.getAbsoluteX(body.width)),
         @intFromFloat(position.getAbsoluteY(body.height)),
         @intFromFloat(body.width),
@@ -50,7 +50,7 @@ fn renderColor(position: Position, body: Body, visual: Visual) void {
 }
 
 fn renderSprite(position: Position, body: Body, visual: Visual) void {
-    ray.DrawTexturePro(
+    rl.drawTexturePro(
         visual.sprite.texture.*,
         .{
             .x = @floatFromInt(visual.sprite.source.x),
@@ -69,7 +69,7 @@ fn renderSprite(position: Position, body: Body, visual: Visual) void {
             .y = 0,
         },
         0,
-        ray.WHITE,
+        rl.Color.white,
     );
 }
 
@@ -77,11 +77,11 @@ fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
     var reg = engine.getRegistry();
     const position = reg.getConst(Position, entity);
 
-    ray.DrawCircle(
+    rl.drawCircle(
         @intFromFloat(position.x),
         @intFromFloat(position.y),
         2,
-        ray.RED,
+        rl.Color.red,
     );
 }
 
@@ -105,18 +105,18 @@ fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
         velocityX,
         velocityY,
     );
-    ray.DrawRectangleLines(
+    rl.drawRectangleLines(
         @intFromFloat(entityAabb.x + entityAabb.velocityX),
         @intFromFloat(entityAabb.y + entityAabb.velocityY),
         @intFromFloat(entityAabb.w),
         @intFromFloat(entityAabb.h),
-        ray.YELLOW,
+        rl.Color.yellow,
     );
-    ray.DrawRectangleLines(
+    rl.drawRectangleLines(
         @intFromFloat(entityAabb.x),
         @intFromFloat(entityAabb.y),
         @intFromFloat(entityAabb.w),
         @intFromFloat(entityAabb.h),
-        ray.RED,
+        rl.Color.red,
     );
 }

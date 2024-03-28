@@ -1,4 +1,4 @@
-const ray = @import("raylib");
+const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
 const components = @import("../../components/main.zig");
 const Movement = components.Movement;
@@ -7,9 +7,9 @@ const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
 
 fn getDirectionX() MovementDirectionX {
-    if (ray.IsKeyDown(ray.KEY_RIGHT) or ray.IsKeyDown(ray.KEY_L)) {
+    if (rl.isKeyDown(rl.KeyboardKey.key_right) or rl.isKeyDown(rl.KeyboardKey.key_l)) {
         return .right;
-    } else if (ray.IsKeyDown(ray.KEY_LEFT) or ray.IsKeyDown(ray.KEY_H)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_left) or rl.isKeyDown(rl.KeyboardKey.key_h)) {
         return .left;
     } else {
         return .none;
@@ -17,9 +17,9 @@ fn getDirectionX() MovementDirectionX {
 }
 
 fn getDirectionY() MovementDirectionY {
-    if (ray.IsKeyDown(ray.KEY_UP) or ray.IsKeyDown(ray.KEY_K)) {
+    if (rl.isKeyDown(rl.KeyboardKey.key_up) or rl.isKeyDown(rl.KeyboardKey.key_k)) {
         return .up;
-    } else if (ray.IsKeyDown(ray.KEY_DOWN) or ray.IsKeyDown(ray.KEY_J)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_down) or rl.isKeyDown(rl.KeyboardKey.key_j)) {
         return .down;
     } else {
         return .none;

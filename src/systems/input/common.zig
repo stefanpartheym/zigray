@@ -1,22 +1,22 @@
-const ray = @import("raylib");
+const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
 
 /// Common input handler system.
 /// Handles events like closing the window, or toggling debug mode.
 pub fn handleInput(engine: *Engine) void {
     // Toggle debug mode, if relevant.
-    if (ray.IsKeyPressed(ray.KEY_F1)) {
+    if (rl.isKeyPressed(rl.KeyboardKey.key_f1)) {
         engine.toggleDebugMode();
     }
 
     // Update the engine's status on certain inputs.
     // For instance, if [Q] is pressed or if the user closes the window, the engine
     // will be stopped.
-    if (ray.WindowShouldClose() or ray.IsKeyPressed(ray.KEY_Q)) {
+    if (rl.windowShouldClose() or rl.isKeyPressed(rl.KeyboardKey.key_q)) {
         engine.changeStatus(.STOPPED);
     }
 
-    if (ray.IsKeyPressed(ray.KEY_F2)) {
+    if (rl.isKeyPressed(rl.KeyboardKey.key_f2)) {
         spawnTestBox(engine);
     }
 }
@@ -43,6 +43,6 @@ fn spawnTestBox(engine: *Engine) void {
     reg.add(entity, components.Velocity{});
     reg.add(entity, components.Gravity{});
     reg.add(entity, components.Body{ .width = 50, .height = 50 });
-    reg.add(entity, components.Visual{ .color = ray.GRAY });
+    reg.add(entity, components.Visual{ .color = rl.Color.gray });
     reg.add(entity, components.Collision{ .onCollision = OnCollisionFn.f });
 }

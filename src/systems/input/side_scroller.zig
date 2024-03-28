@@ -1,5 +1,5 @@
 const ecs = @import("ecs");
-const ray = @import("raylib");
+const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
 const components = @import("../../components/main.zig");
 const Movement = components.Movement;
@@ -8,9 +8,9 @@ const MovementDirectionX = components.MovementDirectionX;
 const MovementDirectionY = components.MovementDirectionY;
 
 fn getDirectionX() MovementDirectionX {
-    if (ray.IsKeyDown(ray.KEY_RIGHT) or ray.IsKeyDown(ray.KEY_L)) {
+    if (rl.isKeyDown(rl.KeyboardKey.key_right) or rl.isKeyDown(rl.KeyboardKey.key_l)) {
         return .right;
-    } else if (ray.IsKeyDown(ray.KEY_LEFT) or ray.IsKeyDown(ray.KEY_H)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_left) or rl.isKeyDown(rl.KeyboardKey.key_h)) {
         return .left;
     } else {
         return .none;
@@ -21,8 +21,8 @@ pub fn handleInput(engine: *Engine) void {
     const reg = engine.getRegistry();
 
     const directionX: MovementDirectionX = getDirectionX();
-    const jump = ray.IsKeyPressed(ray.KEY_SPACE);
-    const shoot = ray.IsKeyPressed(ray.KEY_F);
+    const jump = rl.isKeyPressed(rl.KeyboardKey.key_space);
+    const shoot = rl.isKeyPressed(rl.KeyboardKey.key_f);
 
     var view = reg.view(.{ Movement, Player }, .{});
     var iter = view.entityIterator();
@@ -113,7 +113,7 @@ pub fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginS
     reg.add(projectileEntity, components.Speed{ .movement = 800 });
     reg.add(projectileEntity, components.Velocity{});
     reg.add(projectileEntity, components.Gravity{ .forceY = 1 });
-    reg.add(projectileEntity, components.Visual{ .color = ray.RED });
+    reg.add(projectileEntity, components.Visual{ .color = rl.Color.red });
     reg.add(projectileEntity, components.Projectile{ .shotBy = entity });
     reg.add(projectileEntity, components.Collision{
         .onCollision = struct {

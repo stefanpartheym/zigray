@@ -1,4 +1,4 @@
-const ray = @import("raylib");
+const rl = @import("raylib");
 const std = @import("std");
 const Engine = @import("engine/main.zig").Engine;
 const components = @import("components/main.zig");
@@ -35,8 +35,8 @@ pub fn main() void {
     engine.start();
     defer engine.stop();
 
-    const playerSpriteSheet = ray.LoadTexture("assets/character.atlas.png");
-    defer ray.UnloadTexture(playerSpriteSheet);
+    const playerSpriteSheet = rl.loadTexture("assets/character.atlas.png");
+    defer rl.unloadTexture(playerSpriteSheet);
     const playerAnimations: anim.AnimationDefinitions = &[_]anim.AnimationDefinition{
         // Animation 0: Standing
         &[_]anim.AnimationFrame{
@@ -187,36 +187,36 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     const floor = reg.create();
     reg.add(floor, Position{ .x = screenWidth / 2, .y = screenHeight - 5 });
     reg.add(floor, Body{ .width = screenWidth, .height = 10 });
-    reg.add(floor, Visual{ .color = ray.BROWN });
+    reg.add(floor, Visual{ .color = rl.Color.brown });
     reg.add(floor, Collision{});
     const ceiling = reg.create();
     reg.add(ceiling, Position{ .x = screenWidth / 2, .y = 5 });
     reg.add(ceiling, Body{ .width = screenWidth, .height = 10 });
-    reg.add(ceiling, Visual{ .color = ray.BROWN });
+    reg.add(ceiling, Visual{ .color = rl.Color.brown });
     reg.add(ceiling, Collision{});
     const wallLeft = reg.create();
     reg.add(wallLeft, Position{ .x = 5, .y = screenHeight / 2 });
     reg.add(wallLeft, Body{ .width = 10, .height = screenHeight });
-    reg.add(wallLeft, Visual{ .color = ray.BROWN });
+    reg.add(wallLeft, Visual{ .color = rl.Color.brown });
     reg.add(wallLeft, Collision{});
     const wallRight = reg.create();
     reg.add(wallRight, Position{ .x = screenWidth - 5, .y = screenHeight / 2 });
     reg.add(wallRight, Body{ .width = 10, .height = screenHeight });
-    reg.add(wallRight, Visual{ .color = ray.BROWN });
+    reg.add(wallRight, Visual{ .color = rl.Color.brown });
     reg.add(wallRight, Collision{});
 
     // Platform 1
     const platform1 = reg.create();
     reg.add(platform1, Position{ .x = 150, .y = screenHeight / 2 - 25 });
     reg.add(platform1, Body{ .width = 300, .height = 50 });
-    reg.add(platform1, Visual{ .color = ray.DARKGRAY });
+    reg.add(platform1, Visual{ .color = rl.Color.dark_gray });
     reg.add(platform1, Collision{});
 
     // Platform 2
     const platform2 = reg.create();
     reg.add(platform2, Position{ .x = screenWidth - 150, .y = screenHeight / 3 - 25 });
     reg.add(platform2, Body{ .width = 300, .height = 50 });
-    reg.add(platform2, Visual{ .color = ray.DARKGRAY });
+    reg.add(platform2, Visual{ .color = rl.Color.dark_gray });
     reg.add(platform2, Collision{});
 
     const OnCollisionFn = struct {
@@ -234,7 +234,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(box1, Velocity{});
     reg.add(box1, Gravity{});
     reg.add(box1, Body{ .width = 50, .height = 50 });
-    reg.add(box1, Visual{ .color = ray.DARKGRAY });
+    reg.add(box1, Visual{ .color = rl.Color.dark_gray });
     reg.add(box1, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 2 (in the air)
@@ -243,7 +243,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(box2, Velocity{});
     reg.add(box2, Gravity{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
-    reg.add(box2, Visual{ .color = ray.GRAY });
+    reg.add(box2, Visual{ .color = rl.Color.gray });
     reg.add(box2, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 3 (in the air)
@@ -252,7 +252,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(box3, Velocity{});
     reg.add(box3, Gravity{});
     reg.add(box3, Body{ .width = 50, .height = 50 });
-    reg.add(box3, Visual{ .color = ray.LIGHTGRAY });
+    reg.add(box3, Visual{ .color = rl.Color.light_gray });
     reg.add(box3, Collision{ .onCollision = OnCollisionFn.f });
 
     // Box 4 (in the air)
@@ -261,7 +261,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(box4, Velocity{});
     reg.add(box4, Gravity{});
     reg.add(box4, Body{ .width = 50, .height = 50 });
-    reg.add(box4, Visual{ .color = ray.WHITE });
+    reg.add(box4, Visual{ .color = rl.Color.white });
     reg.add(box4, Collision{ .onCollision = OnCollisionFn.f });
 
     const player = reg.create();
@@ -272,7 +272,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(player, Gravity{});
     reg.add(player, Movement{});
     reg.add(player, Body{ .width = 50, .height = 50 });
-    reg.add(player, Visual{ .color = ray.GREEN });
+    reg.add(player, Visual{ .color = rl.Color.green });
     reg.add(player, Collision{});
     reg.add(player, Animation{
         .definition = 0,

@@ -1,7 +1,7 @@
-const ray = @import("raylib");
+const rl = @import("raylib");
 
 pub const Sprite = struct {
-    texture: *const ray.Texture,
+    texture: *const rl.Texture,
     source: struct {
         x: u32,
         y: u32,

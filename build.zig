@@ -15,17 +15,14 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    const raylib_dep = b.dependency("raylib-zig", .{
+        .target = target,
+        .optimize = optimize,
+    });
 
-    const raylib_mod = b.addModule(
-        "raylib",
-        .{ .root_source_file = .{ .path = "src/raylib.zig" } },
-    );
-    exe.root_module.addImport("raylib", raylib_mod);
+    exe.root_module.addImport("raylib", raylib_dep.module("raylib"));
     exe.root_module.addImport("ecs", zigecs_dep.module("zig-ecs"));
-    exe.linkLibC(); // LibC is required to link against raylib.
-    exe.linkSystemLibrary("raylib");
-
-    b.installArtifact(exe);
+    exe.linkLibrary(raylib_dep.artifact("raylib"));
 
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
