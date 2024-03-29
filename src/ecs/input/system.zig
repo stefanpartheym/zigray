@@ -134,7 +134,7 @@ const OriginState = struct {
     movement: Movement,
 };
 
-pub fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginState) void {
+fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginState) void {
     const body: components.Body = .{ .width = 10, .height = 10 };
     const movement: components.Movement = .{
         .directionX = originState.body.facingDirectionX,

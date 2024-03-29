@@ -16,10 +16,9 @@ pub fn handleGravitation(engine: *Engine) void {
     while (iter.next()) |entity| {
         var velocity = view.get(Velocity, entity);
         const gravity = view.getConst(Gravity, entity);
-        const gravityX = if (gravity.forceX) |forceX| forceX else engineGravity.forceX;
-        const gravityY = if (gravity.forceY) |forceY| forceY else engineGravity.forceY;
-        velocity.x += gravityX * engine.getDeltaTime();
-        velocity.y += gravityY * engine.getDeltaTime();
+        const deltaTime = engine.getDeltaTime();
+        velocity.x += (gravity.forceX orelse engineGravity.forceX) * deltaTime;
+        velocity.y += (gravity.forceY orelse engineGravity.forceY) * deltaTime;
     }
 }
 
@@ -44,7 +43,7 @@ pub fn handleCollision(engine: *Engine, iterations: usize) void {
 /// A collision response could potentially lead to new collisions. Thus, it is
 /// recommended to invoke this function multiple times per frame.
 /// Use `handleCollision` and pass the number of iterations for this purpose.
-pub fn handleCollisionOnce(engine: *Engine) void {
+fn handleCollisionOnce(engine: *Engine) void {
     var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
     var viewColliders = reg.view(.{ Position, Body, Collision }, .{});
