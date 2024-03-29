@@ -1,6 +1,6 @@
-# zigray-test
+# zigray
 
-Test game engine using zig and raylib.
+An amateur 2D platformer game engine using [zig](https://ziglang.org/), [raylib](https://www.raylib.com/) and and [ECS](https://github.com/prime31/zig-ecs).
 
 ## Roadmap
 
@@ -22,6 +22,6 @@ Test game engine using zig and raylib.
 
 Assets used:
 
-| File                           | Description                                                                                                  | Source                                                                                                      |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `./assets/character.atlas.png` | A slightly modified version of the original sprite sheet from [Dylan Falconer](https://github.com/Falconerd) | [Falconerd/games-from-scratch](https://github.com/Falconerd/engine-from-scratch/blob/rec/assets/player.png) |
+| File                           | Description                                                                                                  | Source                                                                                                      | License |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `./assets/character.atlas.png` | A slightly modified version of the original sprite sheet from [Dylan Falconer](https://github.com/Falconerd) | [Falconerd/games-from-scratch](https://github.com/Falconerd/engine-from-scratch/blob/rec/assets/player.png) | unknown |

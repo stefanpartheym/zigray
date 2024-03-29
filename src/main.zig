@@ -7,16 +7,15 @@ const anim = @import("animation/main.zig");
 
 pub fn main() void {
     const name = "zigray-test";
-    const version = "0.0.1";
 
-    std.debug.print("## {s} (v{s}) ##\n", .{ name, version });
+    std.debug.print("## {s} ##\n", .{name});
 
     var engine = Engine.init(
         std.heap.page_allocator,
         .{
             .debug = .{ .enable = false },
             .display = .{
-                .title = name ++ " (v" ++ version ++ ")",
+                .title = name,
                 .width = 800,
                 .height = 600,
                 .targetFps = 60,
