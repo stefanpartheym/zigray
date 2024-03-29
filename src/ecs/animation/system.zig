@@ -9,7 +9,7 @@ const Visual = components.Visual;
 /// Updates the visual component of an entity for each frame with the current
 /// animation frame.
 pub fn animate(engine: *Engine) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Animation, Visual }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {

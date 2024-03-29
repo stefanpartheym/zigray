@@ -19,7 +19,7 @@ pub fn handleInput(engine: *Engine) void {
     // For instance, if [Q] is pressed or if the user closes the window, the engine
     // will be stopped.
     if (rl.windowShouldClose() or rl.isKeyPressed(rl.KeyboardKey.key_q)) {
-        engine.changeStatus(.STOPPED);
+        engine.changeState(.STOPPED);
     }
 
     if (rl.isKeyPressed(rl.KeyboardKey.key_f2)) {
@@ -29,7 +29,7 @@ pub fn handleInput(engine: *Engine) void {
 
 /// Handles movement related input.
 pub fn handleMovementInput(engine: *Engine) void {
-    const reg = engine.getRegistry();
+    const reg = engine.getEcsRegistry();
 
     const directionX: MovementDirectionX = getDirectionX();
     const jump = rl.isKeyPressed(rl.KeyboardKey.key_space);
@@ -96,8 +96,8 @@ pub fn handleMovementInput(engine: *Engine) void {
 //------------------------------------------------------------------------------
 
 fn spawnTestBox(engine: *Engine) void {
-    var reg = engine.getRegistry();
-    const displayWidth = engine.state.display.width;
+    var reg = engine.getEcsRegistry();
+    const displayWidth = engine.config.display.width;
 
     const OnCollisionFn = struct {
         pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
@@ -148,7 +148,7 @@ pub fn shootProjectile(engine: *Engine, entity: ecs.Entity, originState: OriginS
         .y = originState.position.y,
     };
 
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     const projectileEntity = reg.create();
     reg.add(projectileEntity, body);
     reg.add(projectileEntity, movement);

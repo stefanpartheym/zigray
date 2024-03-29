@@ -22,7 +22,7 @@ pub fn endRendering(engine: *Engine) void {
 }
 
 pub fn render(engine: *Engine) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Position, Body, Visual }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -76,7 +76,7 @@ fn renderSprite(position: Position, body: Body, visual: Visual) void {
 }
 
 fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     const position = reg.getConst(Position, entity);
 
     rl.drawCircle(
@@ -88,7 +88,7 @@ fn renderCenterPoint(engine: *Engine, entity: ecs.Entity) void {
 }
 
 fn renderBoundingBox(engine: *Engine, entity: ecs.Entity) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
 
     var velocityX: f32 = 0;
     var velocityY: f32 = 0;

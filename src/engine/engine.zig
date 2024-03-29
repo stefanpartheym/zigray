@@ -1,55 +1,25 @@
 const std = @import("std");
 const ecs = @import("ecs");
 const rl = @import("raylib");
-const state = @import("state.zig");
+const config = @import("config.zig");
 
-pub const EngineInitOptions = struct {
-    debug: struct {
-        enable: bool = false,
-    },
-    display: struct {
-        targetFps: u8 = 160,
-        width: f32,
-        height: f32,
-        useHighDpi: bool,
-        title: [:0]const u8,
-    },
-    physics: struct {
-        gravity: struct {
-            forceX: f32,
-            forceY: f32,
-        },
-    },
+pub const EngineState = enum {
+    STOPPED,
+    RUNNING,
 };
 
 pub const Engine = struct {
     allocator: std.mem.Allocator,
     registry: ecs.Registry,
-    state: state.EngineState,
+    state: EngineState,
+    config: config.EngineConfig,
 
-    pub fn init(allocator: std.mem.Allocator, options: EngineInitOptions) Engine {
+    pub fn init(allocator: std.mem.Allocator, options: config.EngineConfig) Engine {
         return Engine{
             .allocator = allocator,
             .registry = ecs.Registry.init(allocator),
-            .state = state.EngineState{
-                .status = .STOPPED,
-                .debug = .{
-                    .enabled = options.debug.enable,
-                },
-                .display = .{
-                    .width = options.display.width,
-                    .height = options.display.height,
-                    .targetFps = options.display.targetFps,
-                    .useHighDpi = options.display.useHighDpi,
-                    .title = options.display.title,
-                },
-                .physics = .{
-                    .gravity = .{
-                        .forceX = options.physics.gravity.forceX,
-                        .forceY = options.physics.gravity.forceY,
-                    },
-                },
-            },
+            .state = .STOPPED,
+            .config = options,
         };
     }
 
@@ -58,7 +28,7 @@ pub const Engine = struct {
     }
 
     pub fn start(self: *Engine) void {
-        const display = self.state.display;
+        const display = self.config.display;
         if (display.useHighDpi) {
             rl.setConfigFlags(rl.ConfigFlags.flag_window_highdpi);
         }
@@ -70,14 +40,14 @@ pub const Engine = struct {
             display.title,
         );
 
-        self.changeStatus(.RUNNING);
+        self.changeState(.RUNNING);
     }
 
     pub fn stop(_: *const Engine) void {
         rl.closeWindow();
     }
 
-    pub fn getRegistry(self: *Engine) *ecs.Registry {
+    pub fn getEcsRegistry(self: *Engine) *ecs.Registry {
         return &self.registry;
     }
 
@@ -85,19 +55,19 @@ pub const Engine = struct {
         return rl.getFrameTime();
     }
 
-    pub fn changeStatus(self: *Engine, newStatus: state.EngineStatus) void {
-        self.state.status = newStatus;
+    pub fn changeState(self: *Engine, newState: EngineState) void {
+        self.state = newState;
     }
 
     pub fn isRunning(self: *const Engine) bool {
-        return self.state.status == .RUNNING;
+        return self.state == .RUNNING;
     }
 
     pub fn toggleDebugMode(self: *Engine) void {
-        self.state.debug.enabled = !self.state.debug.enabled;
+        self.config.debug.enabled = !self.config.debug.enabled;
     }
 
     pub fn isDebugModeEnabled(self: *const Engine) bool {
-        return self.state.debug.enabled;
+        return self.config.debug.enabled;
     }
 };

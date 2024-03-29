@@ -9,8 +9,8 @@ const Collision = components.Collision;
 
 /// Gravitation system
 pub fn handleGravitation(engine: *Engine) void {
-    const engineGravity = engine.state.physics.gravity;
-    var reg = engine.getRegistry();
+    const engineGravity = engine.config.physics.gravity;
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Velocity, Gravity }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -25,7 +25,7 @@ pub fn handleGravitation(engine: *Engine) void {
 
 /// Collision detection and response system
 pub fn handleCollision(engine: *Engine, iterations: usize) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {
@@ -45,7 +45,7 @@ pub fn handleCollision(engine: *Engine, iterations: usize) void {
 /// recommended to invoke this function multiple times per frame.
 /// Use `handleCollision` and pass the number of iterations for this purpose.
 pub fn handleCollisionOnce(engine: *Engine) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{ Position, Velocity, Body, Collision }, .{});
     var viewColliders = reg.view(.{ Position, Body, Collision }, .{});
 

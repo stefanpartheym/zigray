@@ -5,7 +5,7 @@ const components = @import("../components.zig");
 /// This is required for entities that are destroyed during collision resolution,
 /// because collision resolution potentially runs multiple times per frame.
 pub fn destroyTaggedEntities(engine: *Engine) void {
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
     var view = reg.view(.{components.Destroy}, .{});
     var iter = view.entityIterator();
     while (iter.next()) |entity| {

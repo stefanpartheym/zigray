@@ -13,7 +13,7 @@ pub fn main() void {
     var engine = Engine.init(
         std.heap.page_allocator,
         .{
-            .debug = .{ .enable = false },
+            .debug = .{ .enabled = false },
             .display = .{
                 .title = name,
                 .width = 800,
@@ -169,42 +169,42 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     const Movement = components.Movement;
     const Animation = components.Animation;
 
-    var reg = engine.getRegistry();
+    var reg = engine.getEcsRegistry();
 
-    const screenWidth = engine.state.display.width;
-    const screenHeight = engine.state.display.height;
+    const displayWidth = engine.config.display.width;
+    const displayHeight = engine.config.display.height;
 
     const floor = reg.create();
-    reg.add(floor, Position{ .x = screenWidth / 2, .y = screenHeight - 5 });
-    reg.add(floor, Body{ .width = screenWidth, .height = 10 });
+    reg.add(floor, Position{ .x = displayWidth / 2, .y = displayHeight - 5 });
+    reg.add(floor, Body{ .width = displayWidth, .height = 10 });
     reg.add(floor, Visual{ .color = rl.Color.brown });
     reg.add(floor, Collision{});
     const ceiling = reg.create();
-    reg.add(ceiling, Position{ .x = screenWidth / 2, .y = 5 });
-    reg.add(ceiling, Body{ .width = screenWidth, .height = 10 });
+    reg.add(ceiling, Position{ .x = displayWidth / 2, .y = 5 });
+    reg.add(ceiling, Body{ .width = displayWidth, .height = 10 });
     reg.add(ceiling, Visual{ .color = rl.Color.brown });
     reg.add(ceiling, Collision{});
     const wallLeft = reg.create();
-    reg.add(wallLeft, Position{ .x = 5, .y = screenHeight / 2 });
-    reg.add(wallLeft, Body{ .width = 10, .height = screenHeight });
+    reg.add(wallLeft, Position{ .x = 5, .y = displayHeight / 2 });
+    reg.add(wallLeft, Body{ .width = 10, .height = displayHeight });
     reg.add(wallLeft, Visual{ .color = rl.Color.brown });
     reg.add(wallLeft, Collision{});
     const wallRight = reg.create();
-    reg.add(wallRight, Position{ .x = screenWidth - 5, .y = screenHeight / 2 });
-    reg.add(wallRight, Body{ .width = 10, .height = screenHeight });
+    reg.add(wallRight, Position{ .x = displayWidth - 5, .y = displayHeight / 2 });
+    reg.add(wallRight, Body{ .width = 10, .height = displayHeight });
     reg.add(wallRight, Visual{ .color = rl.Color.brown });
     reg.add(wallRight, Collision{});
 
     // Platform 1
     const platform1 = reg.create();
-    reg.add(platform1, Position{ .x = 150, .y = screenHeight / 2 - 25 });
+    reg.add(platform1, Position{ .x = 150, .y = displayHeight / 2 - 25 });
     reg.add(platform1, Body{ .width = 300, .height = 50 });
     reg.add(platform1, Visual{ .color = rl.Color.dark_gray });
     reg.add(platform1, Collision{});
 
     // Platform 2
     const platform2 = reg.create();
-    reg.add(platform2, Position{ .x = screenWidth - 150, .y = screenHeight / 3 - 25 });
+    reg.add(platform2, Position{ .x = displayWidth - 150, .y = displayHeight / 3 - 25 });
     reg.add(platform2, Body{ .width = 300, .height = 50 });
     reg.add(platform2, Visual{ .color = rl.Color.dark_gray });
     reg.add(platform2, Collision{});
@@ -220,7 +220,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
 
     // Box 1 (on ground)
     const box1 = reg.create();
-    reg.add(box1, Position{ .x = screenWidth / 2 + 100, .y = screenHeight - 35 });
+    reg.add(box1, Position{ .x = displayWidth / 2 + 100, .y = displayHeight - 35 });
     reg.add(box1, Velocity{});
     reg.add(box1, Gravity{});
     reg.add(box1, Body{ .width = 50, .height = 50 });
@@ -229,7 +229,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
 
     // Box 2 (in the air)
     const box2 = reg.create();
-    reg.add(box2, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 + 75 });
+    reg.add(box2, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 + 75 });
     reg.add(box2, Velocity{});
     reg.add(box2, Gravity{});
     reg.add(box2, Body{ .width = 50, .height = 50 });
@@ -238,7 +238,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
 
     // Box 3 (in the air)
     const box3 = reg.create();
-    reg.add(box3, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 });
+    reg.add(box3, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 });
     reg.add(box3, Velocity{});
     reg.add(box3, Gravity{});
     reg.add(box3, Body{ .width = 50, .height = 50 });
@@ -247,7 +247,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
 
     // Box 4 (in the air)
     const box4 = reg.create();
-    reg.add(box4, Position{ .x = screenWidth / 2 + 100, .y = screenHeight / 2 - 75 });
+    reg.add(box4, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 - 75 });
     reg.add(box4, Velocity{});
     reg.add(box4, Gravity{});
     reg.add(box4, Body{ .width = 50, .height = 50 });
@@ -256,7 +256,7 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
 
     const player = reg.create();
     reg.add(player, Player{});
-    reg.add(player, Position{ .x = screenWidth / 2, .y = 350 });
+    reg.add(player, Position{ .x = displayWidth / 2, .y = 350 });
     reg.add(player, Velocity{});
     reg.add(player, Speed{ .movement = 350, .jump = 900 });
     reg.add(player, Gravity{});
