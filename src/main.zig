@@ -10,8 +10,11 @@ pub fn main() void {
 
     std.debug.print("## {s} ##\n", .{name});
 
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer detectMemoryLeaks(gpa.deinit());
+
     var engine = Engine.init(
-        std.heap.page_allocator,
+        gpa.allocator(),
         .{
             .debug = .{ .enabled = false },
             .display = .{
@@ -158,6 +161,13 @@ pub fn main() void {
         systems.input.handleInput(&engine);
 
         systems.cleanup.destroyTaggedEntities(&engine);
+    }
+}
+
+/// Detect potential memory leaks and print a warning message accordingly.
+fn detectMemoryLeaks(leakCheckResult: std.heap.Check) void {
+    if (leakCheckResult == .leak) {
+        std.debug.print("[WARN] Memory leak(s) detected.\n", .{});
     }
 }
 
