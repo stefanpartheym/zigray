@@ -2,6 +2,7 @@ const std = @import("std");
 const ecs = @import("ecs");
 const rl = @import("raylib");
 const config = @import("config.zig");
+const TextureStore = @import("texture_store.zig").TextureStore;
 const components = @import("../ecs/components.zig");
 
 pub const EngineState = enum {
@@ -15,6 +16,7 @@ pub const Engine = struct {
     state: EngineState,
     config: config.EngineConfig,
     background: ?components.Visual,
+    textureStore: TextureStore,
 
     pub fn init(allocator: std.mem.Allocator, options: config.EngineConfig) Engine {
         return Engine{
@@ -23,10 +25,12 @@ pub const Engine = struct {
             .state = .STOPPED,
             .config = options,
             .background = null,
+            .textureStore = TextureStore.init(allocator),
         };
     }
 
     pub fn deinit(self: *Engine) void {
+        self.textureStore.deinit();
         self.registry.deinit();
     }
 
@@ -46,7 +50,9 @@ pub const Engine = struct {
         self.changeState(.RUNNING);
     }
 
-    pub fn stop(_: *const Engine) void {
+    pub fn stop(self: *Engine) void {
+        // Unloading textures must happen before closing the window.
+        self.textureStore.unloadAll();
         rl.closeWindow();
     }
 

@@ -5,7 +5,7 @@ const components = @import("ecs/components.zig");
 const systems = @import("ecs/systems.zig");
 const anim = @import("animation/main.zig");
 
-pub fn main() void {
+pub fn main() !void {
     const name = "zigray-test";
 
     std.debug.print("## {s} ##\n", .{name});
@@ -37,19 +37,17 @@ pub fn main() void {
     engine.start();
     defer engine.stop();
 
-    const backgroundTexture = rl.loadTexture("assets/background.png");
-    defer rl.unloadTexture(backgroundTexture);
-    const playerSpriteSheet = rl.loadTexture("assets/character.atlas.png");
-    defer rl.unloadTexture(playerSpriteSheet);
+    const backgroundTexture = try engine.textureStore.load("background", "assets/background.png");
+    const playerSpriteSheet = try engine.textureStore.load("player", "assets/character.atlas.png");
 
-    engine.background = .{ .sprite = .{ .texture = &backgroundTexture } };
+    engine.background = .{ .sprite = .{ .texture = backgroundTexture } };
 
     const playerAnimations: anim.AnimationDefinitions = &[_]anim.AnimationDefinition{
         // Animation 0: Standing
         &[_]anim.AnimationFrame{
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 0,
                         .y = 24,
@@ -63,7 +61,7 @@ pub fn main() void {
         &[_]anim.AnimationFrame{
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 24,
                         .y = 24,
@@ -74,7 +72,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 48,
                         .y = 24,
@@ -85,7 +83,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 72,
                         .y = 24,
@@ -96,7 +94,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 96,
                         .y = 24,
@@ -107,7 +105,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 120,
                         .y = 24,
@@ -118,7 +116,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 144,
                         .y = 24,
@@ -129,7 +127,7 @@ pub fn main() void {
             },
             .{
                 .sprite = .{
-                    .texture = &playerSpriteSheet,
+                    .texture = playerSpriteSheet,
                     .source = .{
                         .x = 168,
                         .y = 24,
