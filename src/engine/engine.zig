@@ -2,6 +2,7 @@ const std = @import("std");
 const ecs = @import("ecs");
 const rl = @import("raylib");
 const config = @import("config.zig");
+const components = @import("../ecs/components.zig");
 
 pub const EngineState = enum {
     STOPPED,
@@ -13,6 +14,7 @@ pub const Engine = struct {
     registry: ecs.Registry,
     state: EngineState,
     config: config.EngineConfig,
+    background: ?components.Visual,
 
     pub fn init(allocator: std.mem.Allocator, options: config.EngineConfig) Engine {
         return Engine{
@@ -20,6 +22,7 @@ pub const Engine = struct {
             .registry = ecs.Registry.init(allocator),
             .state = .STOPPED,
             .config = options,
+            .background = null,
         };
     }
 

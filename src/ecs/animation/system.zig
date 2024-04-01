@@ -21,17 +21,12 @@ pub fn animate(engine: *Engine) void {
         const definition = animation.definitions[animation.definition];
         const frame = definition[animation.frame];
 
-        const flipFactor: i32 = if (animation.flipFrame) -1 else 1;
         // Update the visual component with the current frame.
         visual.* = .{
             .sprite = .{
                 .texture = frame.sprite.texture,
-                .source = .{
-                    .x = frame.sprite.source.x,
-                    .y = frame.sprite.source.y,
-                    .width = frame.sprite.source.width * flipFactor,
-                    .height = frame.sprite.source.height,
-                },
+                .source = frame.sprite.source,
+                .flip = animation.flipFrame,
             },
         };
 

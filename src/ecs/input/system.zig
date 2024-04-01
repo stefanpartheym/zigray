@@ -108,12 +108,13 @@ fn spawnTestBox(engine: *Engine) void {
         }
     };
 
+    const solidColor = rl.getColor(0x181e2aff);
     const entity = reg.create();
     reg.add(entity, components.Position{ .x = displayWidth / 2, .y = 25 });
     reg.add(entity, components.Velocity{});
     reg.add(entity, components.Gravity{});
     reg.add(entity, components.Body{ .width = 50, .height = 50 });
-    reg.add(entity, components.Visual{ .color = rl.Color.gray });
+    reg.add(entity, components.Visual{ .color = solidColor });
     reg.add(entity, components.Collision{ .onCollision = OnCollisionFn.f });
 }
 

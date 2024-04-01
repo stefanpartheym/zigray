@@ -1,20 +1,33 @@
 const ecs = @import("ecs");
 const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
-const components = @import("../components.zig");
+const Rectangle = @import("../../core/main.zig").Rectangle;
+const Sprite = @import("../../graphics/main.zig").Sprite;
 const aabb = @import("../../physics/aabb.zig");
+const components = @import("../components.zig");
 const Position = components.Position;
 const Body = components.Body;
 const Visual = components.Visual;
 const Collision = components.Collision;
 const Velocity = components.Velocity;
 
-pub fn beginRendering() void {
+pub fn beginRendering(engine: *Engine) void {
     rl.beginDrawing();
+    // Always clear the screen first.
     rl.clearBackground(rl.Color.black);
+    // Render background, if available.
+    if (engine.background) |background| {
+        renderVisual(background, .{
+            .x = 0,
+            .y = 0,
+            .width = engine.config.display.width,
+            .height = engine.config.display.height,
+        });
+    }
 }
 
 pub fn endRendering(engine: *Engine) void {
+    // Render debug info ontop of everything else.
     if (engine.isDebugModeEnabled()) {
         rl.drawFPS(10, 10);
     }
@@ -29,10 +42,15 @@ pub fn render(engine: *Engine) void {
         const position = view.getConst(Position, entity);
         const body = view.getConst(Body, entity);
         const visual = view.getConst(Visual, entity);
-        switch (visual) {
-            .color => renderColor(position, body, visual),
-            .sprite => renderSprite(position, body, visual),
-        }
+        renderVisual(
+            visual,
+            .{
+                .x = position.getAbsoluteX(body.width),
+                .y = position.getAbsoluteY(body.height),
+                .width = body.width,
+                .height = body.height,
+            },
+        );
 
         if (engine.isDebugModeEnabled() and reg.has(Collision, entity)) {
             renderCenterPoint(engine, entity);
@@ -41,35 +59,51 @@ pub fn render(engine: *Engine) void {
     }
 }
 
-fn renderColor(position: Position, body: Body, visual: Visual) void {
+fn renderVisual(visual: Visual, dest: Rectangle) void {
+    switch (visual) {
+        .color => renderColor(visual.color, dest),
+        .sprite => renderSprite(visual.sprite, dest),
+    }
+}
+
+fn renderColor(color: rl.Color, dest: Rectangle) void {
     rl.drawRectangle(
-        @intFromFloat(position.getAbsoluteX(body.width)),
-        @intFromFloat(position.getAbsoluteY(body.height)),
-        @intFromFloat(body.width),
-        @intFromFloat(body.height),
-        visual.color,
+        @intFromFloat(dest.x),
+        @intFromFloat(dest.y),
+        @intFromFloat(dest.width),
+        @intFromFloat(dest.height),
+        color,
     );
 }
 
-fn renderSprite(position: Position, body: Body, visual: Visual) void {
+fn renderSprite(sprite: Sprite, dest: Rectangle) void {
+    var source: rl.Rectangle = .{
+        .x = 0,
+        .y = 0,
+        .width = @floatFromInt(sprite.texture.width),
+        .height = @floatFromInt(sprite.texture.height),
+    };
+    if (sprite.source) |spriteSource| {
+        source = .{
+            .x = @floatFromInt(spriteSource.x),
+            .y = @floatFromInt(spriteSource.y),
+            .width = @floatFromInt(spriteSource.width),
+            .height = @floatFromInt(spriteSource.height),
+        };
+    }
+    const flipFactor: f32 = if (sprite.flip) -1 else 1;
+    source.width *= flipFactor;
+
     rl.drawTexturePro(
-        visual.sprite.texture.*,
+        sprite.texture.*,
+        source,
         .{
-            .x = @floatFromInt(visual.sprite.source.x),
-            .y = @floatFromInt(visual.sprite.source.y),
-            .width = @floatFromInt(visual.sprite.source.width),
-            .height = @floatFromInt(visual.sprite.source.height),
+            .x = dest.x,
+            .y = dest.y,
+            .width = dest.width,
+            .height = dest.height,
         },
-        .{
-            .x = position.getAbsoluteX(body.width),
-            .y = position.getAbsoluteY(body.height),
-            .width = body.width,
-            .height = body.height,
-        },
-        .{
-            .x = 0,
-            .y = 0,
-        },
+        .{ .x = 0, .y = 0 },
         0,
         rl.Color.white,
     );
