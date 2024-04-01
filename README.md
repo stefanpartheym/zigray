@@ -28,6 +28,7 @@ Assets used the test game.
 
 | File                           | Description                                                                                                  | Source                                                                                                      | License |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `./assets/background.png`      | Industrial background sprite from Eragoth's tiny 2D platform shooter assets                                  | [Eragoth's tiny 2D platform shooter assets](https://eragoth.itch.io/eragoths-tiny-platform-shooter)         | unknown |
 | `./assets/character.atlas.png` | A slightly modified version of the original sprite sheet from [Dylan Falconer](https://github.com/Falconerd) | [Falconerd/games-from-scratch](https://github.com/Falconerd/engine-from-scratch/blob/rec/assets/player.png) | unknown |
 
 ## Resources
@@ -36,4 +37,5 @@ Resources, links and respositories I used and learned from during development.
 
 - [Dylan Falconer's „C Game + Engine from scratch“ video series](https://www.youtube.com/watch?v=WficzyoTSsg&list=PLYokS5qr7lSsvgemrTwMSrQsdk4BRqJU6&pp=iAQB)
 - [Swept AABB collision detection and response](https://gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/)
+- [Eragoth's tiny 2D platform shooter assets](https://eragoth.itch.io/eragoths-tiny-platform-shooter)
 - [craftpix.net: Great site with a lot of free game resources](https://craftpix.net/)
