@@ -51,8 +51,13 @@ pub fn render(engine: *Engine) void {
                 .height = body.height,
             },
         );
+    }
 
-        if (engine.isDebugModeEnabled() and reg.has(Collision, entity)) {
+    // Render bounding box of collidable entities in debug mode.
+    if (engine.isDebugModeEnabled()) {
+        var viewColliders = reg.view(.{ Position, Body, Collision }, .{});
+        var iterColliders = viewColliders.entityIterator();
+        while (iterColliders.next()) |entity| {
             renderCenterPoint(engine, entity);
             renderBoundingBox(engine, entity);
         }
