@@ -15,6 +15,7 @@ pub const Animation = @import("components/animation.zig").Animation;
 
 // Tags
 pub const Destroy = @import("components/destroy.zig").Destroy;
+pub const Deadly = @import("components/deadly.zig").Deadly;
 
 // Tests
 test {

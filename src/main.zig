@@ -1,4 +1,5 @@
 const std = @import("std");
+const ecs = @import("ecs");
 const rl = @import("raylib");
 const Engine = @import("engine/main.zig").Engine;
 const components = @import("ecs/components.zig");
@@ -138,7 +139,8 @@ pub fn main() !void {
             },
         },
     };
-    setupEntities(&engine, playerAnimations);
+    setupEntities(&engine);
+    spawnPlayer(engine.getEcsRegistry(), playerAnimations);
 
     while (engine.isRunning()) {
         systems.input.handleMovementInput(&engine);
@@ -169,18 +171,11 @@ fn detectMemoryLeaks(leakCheckResult: std.heap.Check) void {
     }
 }
 
-fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) void {
-    const ecs = @import("ecs");
+fn setupEntities(engine: *Engine) void {
     const Position = components.Position;
-    const Velocity = components.Velocity;
-    const Speed = components.Speed;
-    const Gravity = components.Gravity;
     const Body = components.Body;
     const Visual = components.Visual;
     const Collision = components.Collision;
-    const Player = components.Player;
-    const Movement = components.Movement;
-    const Animation = components.Animation;
 
     var reg = engine.getEcsRegistry();
 
@@ -190,9 +185,9 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     const solidColor = rl.getColor(0x181e2aff);
 
     const floor = reg.create();
-    reg.add(floor, Position{ .x = displayWidth / 2, .y = displayHeight - 5 });
-    reg.add(floor, Body{ .width = displayWidth, .height = 10 });
-    reg.add(floor, Visual{ .color = solidColor });
+    reg.add(floor, Position{ .x = displayWidth / 2, .y = displayHeight });
+    reg.add(floor, Body{ .width = displayWidth, .height = 0 });
+    reg.add(floor, components.Deadly{});
     reg.add(floor, Collision{});
     const ceiling = reg.create();
     reg.add(ceiling, Position{ .x = displayWidth / 2, .y = 5 });
@@ -216,70 +211,60 @@ fn setupEntities(engine: *Engine, playerAnimations: anim.AnimationDefinitions) v
     reg.add(platform1, Body{ .width = 300, .height = 50 });
     reg.add(platform1, Visual{ .color = solidColor });
     reg.add(platform1, Collision{});
-
     // Platform 2
     const platform2 = reg.create();
-    reg.add(platform2, Position{ .x = displayWidth - 150, .y = displayHeight / 3 - 25 });
+    reg.add(platform2, Position{ .x = displayWidth - 150, .y = displayHeight / 2 - 25 });
     reg.add(platform2, Body{ .width = 300, .height = 50 });
     reg.add(platform2, Visual{ .color = solidColor });
     reg.add(platform2, Collision{});
+    // Platform 3
+    const platform3 = reg.create();
+    reg.add(platform3, Position{ .x = displayWidth / 2 - 175, .y = displayHeight - 100 });
+    reg.add(platform3, Body{ .width = 250, .height = 50 });
+    reg.add(platform3, Visual{ .color = solidColor });
+    reg.add(platform3, Collision{});
+}
 
-    const OnCollisionFn = struct {
-        pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
-            // Destroy entity only, if colliding with a projectile.
-            if (r.has(components.Projectile, colliderEntity) and !r.has(components.Destroy, e)) {
-                r.add(e, components.Destroy{});
-            }
-        }
-    };
-
-    // Box 1 (on ground)
-    const box1 = reg.create();
-    reg.add(box1, Position{ .x = displayWidth / 2 + 100, .y = displayHeight - 35 });
-    reg.add(box1, Velocity{});
-    reg.add(box1, Gravity{});
-    reg.add(box1, Body{ .width = 50, .height = 50 });
-    reg.add(box1, Visual{ .color = solidColor });
-    reg.add(box1, Collision{ .onCollision = OnCollisionFn.f });
-
-    // Box 2 (in the air)
-    const box2 = reg.create();
-    reg.add(box2, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 + 75 });
-    reg.add(box2, Velocity{});
-    reg.add(box2, Gravity{});
-    reg.add(box2, Body{ .width = 50, .height = 50 });
-    reg.add(box2, Visual{ .color = solidColor });
-    reg.add(box2, Collision{ .onCollision = OnCollisionFn.f });
-
-    // Box 3 (in the air)
-    const box3 = reg.create();
-    reg.add(box3, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 });
-    reg.add(box3, Velocity{});
-    reg.add(box3, Gravity{});
-    reg.add(box3, Body{ .width = 50, .height = 50 });
-    reg.add(box3, Visual{ .color = solidColor });
-    reg.add(box3, Collision{ .onCollision = OnCollisionFn.f });
-
-    // Box 4 (in the air)
-    const box4 = reg.create();
-    reg.add(box4, Position{ .x = displayWidth / 2 + 100, .y = displayHeight / 2 - 75 });
-    reg.add(box4, Velocity{});
-    reg.add(box4, Gravity{});
-    reg.add(box4, Body{ .width = 50, .height = 50 });
-    reg.add(box4, Visual{ .color = solidColor });
-    reg.add(box4, Collision{ .onCollision = OnCollisionFn.f });
-
+/// Spawn the player entity at the starting position.
+fn spawnPlayer(reg: *ecs.Registry, playerAnimations: anim.AnimationDefinitions) void {
     const player = reg.create();
-    reg.add(player, Player{});
-    reg.add(player, Position{ .x = displayWidth / 2, .y = 350 });
-    reg.add(player, Velocity{});
-    reg.add(player, Speed{ .movement = 350, .jump = 900 });
-    reg.add(player, Gravity{});
-    reg.add(player, Movement{});
-    reg.add(player, Body{ .width = 50, .height = 50 });
-    reg.add(player, Visual{ .color = rl.Color.green });
-    reg.add(player, Collision{});
-    reg.add(player, Animation{
+    reg.add(player, components.Player{
+        .onStateChange = struct {
+            pub fn f(
+                r: *ecs.Registry,
+                e: ecs.Entity,
+                _: components.Player.State,
+                _: components.Player.State,
+            ) void {
+                const animation = r.getConst(components.Animation, e);
+                spawnPlayer(r, animation.definitions);
+            }
+        }.f,
+    });
+    reg.add(player, components.Position{ .x = 50, .y = 50 });
+    reg.add(player, components.Velocity{});
+    reg.add(player, components.Speed{ .movement = 350, .jump = 900 });
+    reg.add(player, components.Gravity{});
+    reg.add(player, components.Movement{});
+    reg.add(player, components.Body{ .width = 50, .height = 50 });
+    reg.add(player, components.Visual{ .color = rl.Color.green });
+    reg.add(player, components.Collision{
+        .onCollision = struct {
+            pub fn f(r: *ecs.Registry, e: ecs.Entity, colliderEntity: ecs.Entity) void {
+                // Kill player, if colliding with a deadly entity.
+                if (r.has(components.Deadly, colliderEntity) and !r.has(components.Destroy, e)) {
+                    r.add(e, components.Destroy{});
+                    var playerState = r.get(components.Player, e);
+                    const oldState = playerState.state;
+                    playerState.state = .dead;
+                    if (playerState.onStateChange) |onStateChange| {
+                        onStateChange(r, e, playerState.state, oldState);
+                    }
+                }
+            }
+        }.f,
+    });
+    reg.add(player, components.Animation{
         .definition = 0,
         .frame = 0,
         .definitions = playerAnimations,
