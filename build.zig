@@ -25,7 +25,7 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(exe);
 
     // Dependencies
-    var zigecs_dep = b.dependency("zig-ecs", options);
+    const zigecs_dep = b.dependency("zig-ecs", options);
     const raylib_dep = b.dependency("raylib-zig", options);
 
     // TODO: Add the dependencies to the library.
