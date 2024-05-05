@@ -14,6 +14,11 @@ An amateur 2D platformer game engine using [zig](https://ziglang.org/), [raylib]
 - [x] Shooting/projectiles
 - [x] Sprites/textures/animations
 - [ ] Enemies/AI
+- [ ] Sound/music
+
+## TODO
+
+- [ ] Implement sprite sheet data loader
 
 ## Bugs
 
