@@ -1,9 +1,9 @@
 const std = @import("std");
 const ecs = @import("ecs");
 const rl = @import("raylib");
-const config = @import("config.zig");
-const TextureStore = @import("texture_store.zig").TextureStore;
+const gfx = @import("../graphics/main.zig");
 const components = @import("../ecs/components.zig");
+const config = @import("./config.zig");
 
 pub const EngineState = enum {
     STOPPED,
@@ -16,7 +16,7 @@ pub const Engine = struct {
     state: EngineState,
     config: config.EngineConfig,
     background: ?components.Visual,
-    textureStore: TextureStore,
+    textureStore: gfx.TextureStore,
 
     pub fn init(allocator: std.mem.Allocator, options: config.EngineConfig) Engine {
         return Engine{
@@ -25,7 +25,7 @@ pub const Engine = struct {
             .state = .STOPPED,
             .config = options,
             .background = null,
-            .textureStore = TextureStore.init(allocator),
+            .textureStore = gfx.TextureStore.init(allocator),
         };
     }
 

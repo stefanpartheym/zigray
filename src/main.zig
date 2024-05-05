@@ -44,7 +44,7 @@ pub fn main() !void {
     engine.background = .{ .sprite = .{ .texture = backgroundTexture } };
 
     const playerAnimations: anim.AnimationDefinitions = &[_]anim.AnimationDefinition{
-        // Animation 0: Standing
+        // Animation 0: Idle
         &[_]anim.AnimationFrame{
             .{
                 .sprite = .{
@@ -58,7 +58,7 @@ pub fn main() !void {
                 },
             },
         },
-        // Animation 1: Moving
+        // Animation 1: Move
         &[_]anim.AnimationFrame{
             .{
                 .sprite = .{
@@ -139,6 +139,7 @@ pub fn main() !void {
             },
         },
     };
+
     setupEntities(&engine);
     spawnPlayer(engine.getEcsRegistry(), playerAnimations);
 
