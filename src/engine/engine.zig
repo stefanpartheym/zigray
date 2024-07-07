@@ -36,9 +36,9 @@ pub const Engine = struct {
 
     pub fn start(self: *Engine) void {
         const display = self.config.display;
-        if (display.useHighDpi) {
-            rl.setConfigFlags(rl.ConfigFlags.flag_window_highdpi);
-        }
+        rl.setConfigFlags(.{
+            .window_highdpi = display.useHighDpi,
+        });
         rl.setTraceLogLevel(rl.TraceLogLevel.log_warning);
         rl.setTargetFPS(display.targetFps);
         rl.initWindow(

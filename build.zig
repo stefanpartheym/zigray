@@ -1,4 +1,5 @@
 const std = @import("std");
+const path = std.Build.path;
 
 pub fn build(b: *std.Build) void {
     const options = .{
@@ -9,7 +10,7 @@ pub fn build(b: *std.Build) void {
     // Provide the engine as library.
     const lib = b.addStaticLibrary(.{
         .name = "zigray",
-        .root_source_file = .{ .path = "src/root.zig" },
+        .root_source_file = path(b, "src/root.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
@@ -18,7 +19,7 @@ pub fn build(b: *std.Build) void {
     // Provide an executable for the test game using the engine.
     const exe = b.addExecutable(.{
         .name = "zigray",
-        .root_source_file = .{ .path = "src/main.zig" },
+        .root_source_file = path(b, "src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
@@ -46,7 +47,7 @@ pub fn build(b: *std.Build) void {
 
     // Declare library tests.
     const lib_unit_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/root.zig" },
+        .root_source_file = path(b, "src/root.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
@@ -54,7 +55,7 @@ pub fn build(b: *std.Build) void {
 
     // Declare executable tests.
     const exe_unit_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/main.zig" },
+        .root_source_file = path(b, "src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
