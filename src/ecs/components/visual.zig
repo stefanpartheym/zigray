@@ -1,12 +1,14 @@
 const rl = @import("raylib");
-const Sprite = @import("../../graphics/main.zig").Sprite;
+const graphics = @import("../../graphics/main.zig");
 
 const VisualType = enum {
     color,
     sprite,
+    text,
 };
 
 pub const Visual = union(VisualType) {
     color: rl.Color,
-    sprite: Sprite,
+    sprite: graphics.Sprite,
+    text: graphics.Text,
 };

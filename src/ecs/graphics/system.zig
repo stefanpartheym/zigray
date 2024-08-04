@@ -3,6 +3,7 @@ const rl = @import("raylib");
 const Engine = @import("../../engine/main.zig").Engine;
 const Rectangle = @import("../../core/main.zig").Rectangle;
 const Sprite = @import("../../graphics/main.zig").Sprite;
+const Text = @import("../../graphics/main.zig").Text;
 const aabb = @import("../../physics/aabb.zig");
 const components = @import("../components.zig");
 const Position = components.Position;
@@ -68,8 +69,14 @@ fn renderVisual(visual: Visual, dest: Rectangle) void {
     switch (visual) {
         .color => renderColor(visual.color, dest),
         .sprite => renderSprite(visual.sprite, dest),
+        .text => renderText(visual.text, dest),
     }
 }
+
+fn renderText(text: Text, dest: Rectangle) void {
+    rl.drawText(text.text, @intFromFloat(dest.x), @intFromFloat(dest.y), text.size, text.color);
+}
+
 
 fn renderColor(color: rl.Color, dest: Rectangle) void {
     rl.drawRectangle(
