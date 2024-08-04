@@ -1,7 +1,7 @@
 .{
     .name = "zigray",
     .version = "0.0.0",
-    .minimum_zig_version = "0.12.1",
+    .minimum_zig_version = "0.13.0",
     .dependencies = .{
         .@"raylib-zig" = .{
             .url = "https://github.com/Not-Nik/raylib-zig/archive/a7f25c615b00b61de1fa5ae432793dd866b81808.tar.gz",

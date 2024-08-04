@@ -1,5 +1,4 @@
 const std = @import("std");
-const path = std.Build.path;
 
 pub fn build(b: *std.Build) void {
     const options = .{
@@ -7,31 +6,32 @@ pub fn build(b: *std.Build) void {
         .optimize = b.standardOptimizeOption(.{}),
     };
 
-    // Provide the engine as library.
-    const lib = b.addStaticLibrary(.{
-        .name = "zigray",
-        .root_source_file = path(b, "src/root.zig"),
+    // Dependencies
+    const zigecs_dep = b.dependency("entt", options);
+    const raylib_dep = b.dependency("raylib-zig", options);
+
+    // Provide the engine as module.
+    const mod = b.addModule("zigray", .{
+        .root_source_file = b.path("src/root.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
-    b.installArtifact(lib);
+    // Add dependencies to the module.
+    mod.addImport("raylib", raylib_dep.module("raylib"));
+    mod.addImport("ecs", zigecs_dep.module("zig-ecs"));
+    mod.linkLibrary(raylib_dep.artifact("raylib"));
 
     // Provide an executable for the test game using the engine.
     const exe = b.addExecutable(.{
         .name = "zigray",
-        .root_source_file = path(b, "src/main.zig"),
+        .root_source_file = b.path("src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
     b.installArtifact(exe);
 
-    // Dependencies
-    const zigecs_dep = b.dependency("entt", options);
-    const raylib_dep = b.dependency("raylib-zig", options);
-
-    // TODO: Add the dependencies to the library.
-
-    // Add the dependencies to the executable.
+    // Add dependencies to the executable.
+    // TODO: Use the module provided as `mod`.
     exe.root_module.addImport("raylib", raylib_dep.module("raylib"));
     exe.root_module.addImport("ecs", zigecs_dep.module("zig-ecs"));
     exe.linkLibrary(raylib_dep.artifact("raylib"));
@@ -47,7 +47,7 @@ pub fn build(b: *std.Build) void {
 
     // Declare library tests.
     const lib_unit_tests = b.addTest(.{
-        .root_source_file = path(b, "src/root.zig"),
+        .root_source_file = b.path("src/root.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
@@ -55,7 +55,7 @@ pub fn build(b: *std.Build) void {
 
     // Declare executable tests.
     const exe_unit_tests = b.addTest(.{
-        .root_source_file = path(b, "src/main.zig"),
+        .root_source_file = b.path("src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
     });
